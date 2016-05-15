@@ -9,7 +9,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>encoding-decoding</groupId>
-    <artifactId>encoding-decoding</artifactId>
+    <groupId>coder</groupId>
+    <artifactId>coder</artifactId>
     <version>1.0-SNAPSHOT</version>
 </project>
