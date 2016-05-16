@@ -1,5 +1,7 @@
 package com.dataart.security;
 
+import javax.xml.bind.DatatypeConverter;
+
 public class HexCoder implements ICoder {
 
     private static class HexCoderHolder {
@@ -15,11 +17,19 @@ public class HexCoder implements ICoder {
 
     @Override
     public String decode(String input) {
-        return null;
+        if (input == null) {
+            return null;
+        }
+
+        return new String(DatatypeConverter.parseHexBinary(input));
     }
 
     @Override
     public String encode(String input) {
-        return null;
+        if (input == null) {
+            return null;
+        }
+
+        return DatatypeConverter.printHexBinary(input.getBytes(UTF8));
     }
 }
