@@ -2,6 +2,8 @@ package com.dataart.security;
 
 import javax.xml.bind.DatatypeConverter;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 public class HexCoder implements ICoder {
 
     private static class HexCoderHolder {
@@ -30,6 +32,6 @@ public class HexCoder implements ICoder {
             return null;
         }
 
-        return DatatypeConverter.printHexBinary(input.getBytes(UTF8));
+        return DatatypeConverter.printHexBinary(input.getBytes(UTF_8));
     }
 }

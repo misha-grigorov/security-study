@@ -4,6 +4,8 @@ import org.pmw.tinylog.Logger;
 
 import java.util.Base64;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 public class Base64Coder implements ICoder {
     private static final Base64.Encoder ENCODER = Base64.getEncoder();
     private static final Base64.Decoder DECODER = Base64.getDecoder();
@@ -33,7 +35,7 @@ public class Base64Coder implements ICoder {
             Logger.warn("You input is invalid");
         }
 
-        return decodedBytes == null ? null : new String(decodedBytes, UTF8);
+        return decodedBytes == null ? null : new String(decodedBytes, UTF_8);
     }
 
     @Override
@@ -42,6 +44,6 @@ public class Base64Coder implements ICoder {
             return null;
         }
 
-        return ENCODER.encodeToString(input.getBytes(UTF8));
+        return ENCODER.encodeToString(input.getBytes(UTF_8));
     }
 }

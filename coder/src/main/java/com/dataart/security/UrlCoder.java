@@ -6,6 +6,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 public class UrlCoder implements ICoder {
 
     private static class UrlCoderHolder {
@@ -29,7 +31,7 @@ public class UrlCoder implements ICoder {
         String result = null;
 
         try {
-            result = URLDecoder.decode(input, UTF8.name());
+            result = URLDecoder.decode(input, UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             Logger.warn(e.getMessage());
         }
@@ -46,7 +48,7 @@ public class UrlCoder implements ICoder {
         String result = null;
 
         try {
-            result = URLEncoder.encode(input, UTF8.name());
+            result = URLEncoder.encode(input, UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             Logger.warn(e.getMessage());
         }
