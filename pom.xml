@@ -10,6 +10,7 @@
 
     <modules>
         <module>coder</module>
+        <module>simple-http-server</module>
     </modules>
 
     <properties>
