@@ -8,11 +8,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import static java.net.HttpURLConnection.HTTP_BAD_METHOD;
 
 public abstract class AbstractHttpHandler implements HttpHandler {
+    protected final static Charset UTF8 = Charset.forName("UTF-8");
 
     protected abstract List<String> getAllowedMethods();
     protected abstract void chainHandle(HttpExchange httpExchange) throws IOException;
@@ -21,16 +23,14 @@ public abstract class AbstractHttpHandler implements HttpHandler {
     public void handle(HttpExchange httpExchange) throws IOException {
         InetSocketAddress remoteAddress = httpExchange.getRemoteAddress();
         String requestMethod = httpExchange.getRequestMethod();
-        InputStream requestBody = httpExchange.getRequestBody();
-        OutputStream responseBody = httpExchange.getResponseBody();
 
         Logger.info("Incoming request {}:{}, {} {}", remoteAddress.getHostString(), remoteAddress.getPort(),
                 requestMethod, httpExchange.getRequestURI());
 
         if (!getAllowedMethods().contains(requestMethod)) {
-            httpExchange.sendResponseHeaders(HTTP_BAD_METHOD, -1);
-            closeRequestBodyStream(requestBody);
-            closeResponseBodyStream(responseBody);
+            badRequest(HTTP_BAD_METHOD, httpExchange);
+
+            return;
         }
 
         chainHandle(httpExchange);
@@ -43,5 +43,11 @@ public abstract class AbstractHttpHandler implements HttpHandler {
     protected void closeResponseBodyStream(OutputStream responseBody) throws IOException {
         responseBody.flush();
         responseBody.close();
+    }
+
+    protected void badRequest(int responseStatus, HttpExchange httpExchange) throws IOException {
+        httpExchange.sendResponseHeaders(responseStatus, -1);
+        closeRequestBodyStream(httpExchange.getRequestBody());
+        closeResponseBodyStream(httpExchange.getResponseBody());
     }
 }
