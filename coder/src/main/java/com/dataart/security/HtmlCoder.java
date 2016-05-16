@@ -1,5 +1,7 @@
 package com.dataart.security;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 public class HtmlCoder implements ICoder {
 
     private static class HtmlCoderHolder {
@@ -15,11 +17,11 @@ public class HtmlCoder implements ICoder {
 
     @Override
     public String decode(String input) {
-        return null;
+        return StringEscapeUtils.unescapeHtml4(input);
     }
 
     @Override
     public String encode(String input) {
-        return null;
+        return StringEscapeUtils.escapeHtml4(input);
     }
 }
