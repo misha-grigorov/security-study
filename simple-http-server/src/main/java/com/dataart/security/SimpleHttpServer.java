@@ -2,6 +2,7 @@ package com.dataart.security;
 
 import com.dataart.security.handlers.JsonHandler;
 import com.dataart.security.handlers.RootHandler;
+import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpServer;
 import org.pmw.tinylog.Logger;
 
@@ -44,6 +45,9 @@ public class SimpleHttpServer {
 
     protected void initContext() {
         server.createContext("/", new RootHandler());
-        server.createContext("/json", new JsonHandler());
+
+        HttpContext secureContext = server.createContext("/json", new JsonHandler());
+
+        secureContext.setAuthenticator(new SimpleBasicAuthenticator("Some Realm"));
     }
 }
