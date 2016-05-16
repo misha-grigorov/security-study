@@ -14,7 +14,6 @@ import java.util.List;
 import static java.net.HttpURLConnection.HTTP_BAD_METHOD;
 
 public abstract class AbstractHttpHandler implements HttpHandler {
-    protected final static Charset UTF8 = Charset.forName("UTF-8");
 
     protected abstract List<String> getAllowedMethods();
     protected abstract void chainHandle(HttpExchange httpExchange) throws IOException;

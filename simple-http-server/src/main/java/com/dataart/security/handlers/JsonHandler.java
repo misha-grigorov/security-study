@@ -1,9 +1,12 @@
 package com.dataart.security.handlers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsonorg.JsonOrgModule;
 import com.sun.net.httpserver.HttpExchange;
-import org.json.JSONObject;
+import org.boon.json.JsonException;
+import org.boon.json.JsonFactory;
+import org.boon.json.JsonParserFactory;
+import org.boon.json.JsonSerializerFactory;
+import org.boon.json.ObjectMapper;
+import org.boon.json.implementation.ObjectMapperImpl;
 import org.pmw.tinylog.Logger;
 
 import java.io.IOException;
@@ -13,13 +16,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import static java.net.HttpURLConnection.HTTP_OK;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class JsonHandler extends AbstractHttpHandler {
     private static final List<String> ALLOWED_METHODS = Arrays.asList("POST");
-    private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+    private static final ObjectMapper JSON_MAPPER;
 
     static {
-        JSON_MAPPER.registerModule(new JsonOrgModule());
+        JsonParserFactory jsonParserFactory = new JsonParserFactory().strict();
+
+        JSON_MAPPER = new ObjectMapperImpl(jsonParserFactory, new JsonSerializerFactory());
     }
 
     @Override
@@ -34,11 +40,11 @@ public class JsonHandler extends AbstractHttpHandler {
 
         httpExchange.getResponseHeaders().add("Content-Type", "text/plain; charset=utf-8");
 
-        JSONObject jsonObject = null;
+        Object jsonObject = null;
 
         try {
-            jsonObject = JSON_MAPPER.readValue(requestBody, JSONObject.class);
-        } catch (IOException e) {
+            jsonObject = JSON_MAPPER.readValue(requestBody, Object.class);
+        } catch (JsonException e) {
             Logger.warn(e.getMessage());
         }
 
@@ -48,7 +54,7 @@ public class JsonHandler extends AbstractHttpHandler {
 
         httpExchange.sendResponseHeaders(HTTP_OK, response.length());
 
-        responseBody.write(response.getBytes(UTF8));
+        responseBody.write(response.getBytes(UTF_8));
 
         closeResponseBodyStream(responseBody);
     }

@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static java.net.HttpURLConnection.HTTP_OK;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class RootHandler extends AbstractHttpHandler {
     private static final String WELCOME_MESSAGE = "Welcome to our server";
@@ -27,7 +28,7 @@ public class RootHandler extends AbstractHttpHandler {
 
         OutputStream responseBody = httpExchange.getResponseBody();
 
-        responseBody.write(WELCOME_MESSAGE.getBytes(UTF8));
+        responseBody.write(WELCOME_MESSAGE.getBytes(UTF_8));
 
         closeResponseBodyStream(responseBody);
     }
