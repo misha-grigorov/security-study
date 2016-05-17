@@ -10,21 +10,9 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>simple-http-server</groupId>
-    <artifactId>simple-http-server</artifactId>
+    <groupId>simple-http-client</groupId>
+    <artifactId>simple-http-client</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-
-    <properties>
-        <boon.version>0.33</boon.version>
-    </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>io.fastjson</groupId>
-            <artifactId>boon</artifactId>
-            <version>${boon.version}</version>
-        </dependency>
-    </dependencies>
 
 </project>

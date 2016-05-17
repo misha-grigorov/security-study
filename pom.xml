@@ -11,6 +11,7 @@
     <modules>
         <module>coder</module>
         <module>simple-http-server</module>
+        <module>simple-http-client</module>
     </modules>
 
     <properties>

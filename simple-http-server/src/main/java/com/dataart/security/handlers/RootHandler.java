@@ -3,12 +3,10 @@ package com.dataart.security.handlers;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 
 import static java.net.HttpURLConnection.HTTP_OK;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class RootHandler extends AbstractHttpHandler {
     private static final String WELCOME_MESSAGE = "Welcome to our server";
@@ -26,10 +24,6 @@ public class RootHandler extends AbstractHttpHandler {
 
         closeRequestBodyStream(httpExchange.getRequestBody());
 
-        OutputStream responseBody = httpExchange.getResponseBody();
-
-        responseBody.write(WELCOME_MESSAGE.getBytes(UTF_8));
-
-        closeResponseBodyStream(responseBody);
+        sendResponse(WELCOME_MESSAGE, httpExchange.getResponseBody());
     }
 }

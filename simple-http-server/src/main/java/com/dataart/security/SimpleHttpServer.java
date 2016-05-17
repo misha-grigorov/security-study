@@ -1,8 +1,10 @@
 package com.dataart.security;
 
+import com.dataart.security.handlers.FileUploadHandler;
+import com.dataart.security.handlers.FormHandler;
 import com.dataart.security.handlers.JsonHandler;
 import com.dataart.security.handlers.RootHandler;
-import com.sun.net.httpserver.HttpContext;
+import com.sun.net.httpserver.Authenticator;
 import com.sun.net.httpserver.HttpServer;
 import org.pmw.tinylog.Logger;
 
@@ -44,10 +46,11 @@ public class SimpleHttpServer {
     }
 
     protected void initContext() {
+        Authenticator authenticator = new SimpleBasicAuthenticator("Some Realm");
+
         server.createContext("/", new RootHandler());
-
-        HttpContext secureContext = server.createContext("/json", new JsonHandler());
-
-        secureContext.setAuthenticator(new SimpleBasicAuthenticator("Some Realm"));
+        server.createContext("/json", new JsonHandler()).setAuthenticator(authenticator);
+        server.createContext("/form", new FormHandler()).setAuthenticator(authenticator);
+        server.createContext("/upload", new FileUploadHandler()).setAuthenticator(authenticator);
     }
 }

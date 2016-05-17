@@ -8,12 +8,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.nio.charset.Charset;
 import java.util.List;
 
 import static java.net.HttpURLConnection.HTTP_BAD_METHOD;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public abstract class AbstractHttpHandler implements HttpHandler {
+    protected static final String CONTENT_TYPE = "Content-Type";
 
     protected abstract List<String> getAllowedMethods();
     protected abstract void chainHandle(HttpExchange httpExchange) throws IOException;
@@ -48,5 +49,11 @@ public abstract class AbstractHttpHandler implements HttpHandler {
         httpExchange.sendResponseHeaders(responseStatus, -1);
         closeRequestBodyStream(httpExchange.getRequestBody());
         closeResponseBodyStream(httpExchange.getResponseBody());
+    }
+
+    protected void sendResponse(String response, OutputStream responseBody) throws IOException {
+        responseBody.write(response.getBytes(UTF_8));
+
+        closeResponseBodyStream(responseBody);
     }
 }
