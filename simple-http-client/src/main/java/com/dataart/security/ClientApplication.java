@@ -4,12 +4,18 @@ import org.boon.json.JsonFactory;
 import org.pmw.tinylog.Logger;
 
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.nio.file.Files;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +31,7 @@ public class ClientApplication {
         getRequestToServerRoot();
         postRequestToServerJson();
         postRequestToServerForm();
+        postFileToServer();
     }
 
     public static void getRequestToServerRoot() throws IOException {
@@ -102,6 +109,42 @@ public class ClientApplication {
         String response = readResponse(httpURLConnection.getInputStream());
 
         Logger.info("POST FORM " + stringBuilder.toString() + " TO " + requestUrl + " AUTH IS " + BASIC_AUTH);
+        Logger.info("RESPONSE FROM SERVER: {} {} \n{}", httpURLConnection.getResponseCode(), httpURLConnection.getResponseMessage(),
+                response);
+    }
+
+    public static void postFileToServer() throws IOException {
+        String requestUrl = SERVER_URL + "/upload";
+        URL connectUrl = new URL(requestUrl);
+        HttpURLConnection httpURLConnection = (HttpURLConnection) connectUrl.openConnection();
+
+        httpURLConnection.setRequestMethod("POST");
+        httpURLConnection.setRequestProperty("User-Agent", USER_AGENT);
+        httpURLConnection.setRequestProperty("Authorization", BASIC_AUTH);
+        httpURLConnection.setDoOutput(true);
+
+        File file = new File("D:\\upload.json");
+        String boundary = Long.toHexString(System.currentTimeMillis());
+        String CRLF = "\r\n";
+
+        httpURLConnection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+
+        OutputStream output = httpURLConnection.getOutputStream();
+        PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, UTF_8), true);
+
+        writer.append("--").append(boundary).append(CRLF);
+        writer.append("Content-Disposition: form-data; name=\"file\"; filename=\"").append(file.getName()).append("\"").append(CRLF);
+        writer.append("Content-Type: ").append(URLConnection.guessContentTypeFromName(file.getName())).append(CRLF);
+        writer.append("Content-Transfer-Encoding: binary").append(CRLF);
+        writer.append(CRLF).flush();
+        Files.copy(file.toPath(), output);
+        output.flush();
+        writer.append(CRLF).flush();
+        writer.append("--").append(boundary).append("--").append(CRLF).flush();
+
+        String response = readResponse(httpURLConnection.getInputStream());
+
+        Logger.info("POST FORM " + file.getName() + " TO " + requestUrl + " AUTH IS " + BASIC_AUTH);
         Logger.info("RESPONSE FROM SERVER: {} {} \n{}", httpURLConnection.getResponseCode(), httpURLConnection.getResponseMessage(),
                 response);
     }
