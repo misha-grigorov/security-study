@@ -1,8 +1,10 @@
 package com.dataart.security;
 
+import com.dataart.security.handlers.AuthHandler;
 import com.dataart.security.handlers.FileUploadHandler;
 import com.dataart.security.handlers.FormHandler;
 import com.dataart.security.handlers.JsonHandler;
+import com.dataart.security.handlers.LoginPageHandler;
 import com.dataart.security.handlers.RootHandler;
 import com.sun.net.httpserver.Authenticator;
 import com.sun.net.httpserver.HttpServer;
@@ -46,11 +48,14 @@ public class SimpleHttpServer {
     }
 
     protected void initContext() {
-        Authenticator authenticator = new SimpleBasicAuthenticator("Some Realm");
+        Authenticator basicAuthenticator = new SimpleBasicAuthenticator("Some Realm");
+        Authenticator formsAuthenticator = new FormsAuthenticator();
 
-        server.createContext("/", new RootHandler());
-        server.createContext("/json", new JsonHandler()).setAuthenticator(authenticator);
-        server.createContext("/form", new FormHandler()).setAuthenticator(authenticator);
-        server.createContext("/upload", new FileUploadHandler()).setAuthenticator(authenticator);
+        server.createContext("/", new RootHandler()).setAuthenticator(formsAuthenticator);
+        server.createContext("/auth", new AuthHandler()).setAuthenticator(formsAuthenticator);
+        server.createContext("/login-page", new LoginPageHandler());
+        server.createContext("/json", new JsonHandler()).setAuthenticator(basicAuthenticator);
+        server.createContext("/form", new FormHandler()).setAuthenticator(basicAuthenticator);
+        server.createContext("/upload", new FileUploadHandler()).setAuthenticator(basicAuthenticator);
     }
 }

@@ -17,6 +17,7 @@
 
     <properties>
         <boon.version>0.33</boon.version>
+        <jBCrypt.version>0.4.1</jBCrypt.version>
     </properties>
 
     <dependencies>
@@ -24,6 +25,11 @@
             <groupId>io.fastjson</groupId>
             <artifactId>boon</artifactId>
             <version>${boon.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.svenkubiak</groupId>
+            <artifactId>jBCrypt</artifactId>
+            <version>${jBCrypt.version}</version>
         </dependency>
     </dependencies>
 

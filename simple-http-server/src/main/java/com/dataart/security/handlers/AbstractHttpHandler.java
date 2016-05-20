@@ -14,7 +14,7 @@ import static java.net.HttpURLConnection.HTTP_BAD_METHOD;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public abstract class AbstractHttpHandler implements HttpHandler {
-    protected static final String CONTENT_TYPE = "Content-Type";
+    public static final String CONTENT_TYPE = "Content-Type";
 
     protected abstract List<String> getAllowedMethods();
     protected abstract void chainHandle(HttpExchange httpExchange) throws IOException;
