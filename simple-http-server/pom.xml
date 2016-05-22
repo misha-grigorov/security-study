@@ -18,6 +18,8 @@
     <properties>
         <boon.version>0.33</boon.version>
         <jBCrypt.version>0.4.1</jBCrypt.version>
+        <commons-lang.version>3.4</commons-lang.version>
+        <commons-validator.version>1.5.1</commons-validator.version>
     </properties>
 
     <dependencies>
@@ -31,6 +33,17 @@
             <artifactId>jBCrypt</artifactId>
             <version>${jBCrypt.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
+            <version>${commons-validator.version}</version>
+        </dependency>
+
     </dependencies>
 
 </project>

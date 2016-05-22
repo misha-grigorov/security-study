@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.dataart.security.utils.Utils.CONTENT_TYPE;
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 import static java.net.HttpURLConnection.HTTP_OK;
 

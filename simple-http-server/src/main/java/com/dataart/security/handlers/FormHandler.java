@@ -1,6 +1,6 @@
 package com.dataart.security.handlers;
 
-import com.dataart.security.Utils;
+import com.dataart.security.utils.Utils;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
@@ -9,7 +9,9 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.dataart.security.Utils.readRequestBody;
+import static com.dataart.security.utils.Utils.CONTENT_TYPE;
+import static com.dataart.security.utils.Utils.FORMS_URL_ENCODED;
+import static com.dataart.security.utils.Utils.readRequestBody;
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 import static java.net.HttpURLConnection.HTTP_OK;
 
@@ -23,7 +25,7 @@ public class FormHandler extends AbstractHttpHandler {
 
     @Override
     protected void chainHandle(HttpExchange httpExchange) throws IOException {
-        if (!"application/x-www-form-urlencoded".equals(httpExchange.getRequestHeaders().getFirst(CONTENT_TYPE))) {
+        if (!FORMS_URL_ENCODED.equals(httpExchange.getRequestHeaders().getFirst(CONTENT_TYPE))) {
             badRequest(HTTP_BAD_REQUEST, httpExchange);
 
             return;

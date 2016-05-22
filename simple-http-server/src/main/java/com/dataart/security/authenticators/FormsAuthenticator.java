@@ -2,7 +2,7 @@ package com.dataart.security.authenticators;
 
 import com.dataart.security.AuthMetricManager;
 import com.dataart.security.db.InMemoryUserDataBase;
-import com.dataart.security.Utils;
+import com.dataart.security.utils.Utils;
 import com.dataart.security.session.Session;
 import com.dataart.security.session.SessionManager;
 import com.dataart.security.users.User;
@@ -16,16 +16,16 @@ import org.pmw.tinylog.Logger;
 
 import java.util.Map;
 
-import static com.dataart.security.handlers.AbstractHttpHandler.CONTENT_TYPE;
+import static com.dataart.security.utils.Utils.CONTENT_TYPE;
+import static com.dataart.security.utils.Utils.FORMS_URL_ENCODED;
+import static com.dataart.security.utils.Utils.SERVER_SESSION_KEY;
+import static com.dataart.security.utils.Utils.USER_AGENT;
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 import static java.net.HttpURLConnection.HTTP_MOVED_TEMP;
 import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 
 public class FormsAuthenticator extends Authenticator {
-    private static final String USER_AGENT = "User-Agent";
     private static final String REALM = "Forms-realm";
-    private static final String COOKIE_KEY = "Cookie";
-    private static final String SERVER_SESSION_KEY = "id=";
     private static final SessionManager SESSION_MANAGER = SessionManager.getInstance();
     private static final InMemoryUserDataBase DATA_BASE = InMemoryUserDataBase.getInstance();
     private static final AuthMetricManager AUTH_METRIC_MANAGER = AuthMetricManager.getInstance();
@@ -35,7 +35,7 @@ public class FormsAuthenticator extends Authenticator {
         String requestMethod = httpExchange.getRequestMethod();
         Headers responseHeaders = httpExchange.getResponseHeaders();
 
-        Session session = getUserSessionIfAuthenticated(httpExchange);
+        Session session = SESSION_MANAGER.getSessionIfAuthenticated(httpExchange);
 
         if (session != null) {
             SESSION_MANAGER.updateSession(session, System.currentTimeMillis());
@@ -50,46 +50,10 @@ public class FormsAuthenticator extends Authenticator {
         return redirectToLoginPage(responseHeaders);
     }
 
-    private Session getUserSessionIfAuthenticated(HttpExchange httpExchange) {
-        Headers requestHeaders = httpExchange.getRequestHeaders();
-
-        if (requestHeaders.containsKey(COOKIE_KEY)) {
-            String cookie = requestHeaders.getFirst(COOKIE_KEY);
-
-            if (cookie.contains(SERVER_SESSION_KEY)) {
-                int startIndex = cookie.indexOf(SERVER_SESSION_KEY) + SERVER_SESSION_KEY.length();
-                int endIndex = cookie.contains(";") ? cookie.indexOf(";", startIndex) : cookie.length();
-                String sessionToken = cookie.substring(startIndex, endIndex);
-
-                Session session = SESSION_MANAGER.getSessionByToken(sessionToken);
-
-                if (session == null) {
-                    return null;
-                }
-
-                if (!session.getIpAddress().equals(httpExchange.getRemoteAddress().getHostString())) {
-                    return null;
-                }
-
-                if (!session.getUserAgent().equals(requestHeaders.getFirst(USER_AGENT))) {
-                    return null;
-                }
-
-                Logger.info("user={} session found", session.getUser());
-
-                return session;
-            }
-        }
-
-        Logger.info("session was not found for specified sessionId");
-
-        return null;
-    }
-
     private Result tryToAuthenticate(HttpExchange httpExchange) {
         Headers requestHeaders = httpExchange.getRequestHeaders();
 
-        if (!"application/x-www-form-urlencoded".equals(requestHeaders.getFirst(CONTENT_TYPE))) {
+        if (!FORMS_URL_ENCODED.equals(requestHeaders.getFirst(CONTENT_TYPE))) {
             return new Failure(HTTP_BAD_REQUEST);
         }
 

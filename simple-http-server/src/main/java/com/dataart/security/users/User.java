@@ -11,8 +11,12 @@ public class User {
     private String salt;
     private UserStatus status;
 
-    public User() {
+    public User(String login, String email, String password) {
+        this.login = login;
+        this.email = email;
+        this.status = UserStatus.SUSPENDED;
         this.salt = BCrypt.gensalt();
+        setPassword(password);
     }
 
     public String getLogin() {

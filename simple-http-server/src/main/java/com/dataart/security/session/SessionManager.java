@@ -1,10 +1,16 @@
 package com.dataart.security.session;
 
 import com.dataart.security.users.User;
+import com.sun.net.httpserver.Headers;
+import com.sun.net.httpserver.HttpExchange;
 import org.pmw.tinylog.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.dataart.security.utils.Utils.COOKIE_KEY;
+import static com.dataart.security.utils.Utils.SERVER_SESSION_KEY;
+import static com.dataart.security.utils.Utils.USER_AGENT;
 
 public class SessionManager {
     private static final int SESSION_EXPIRED_TIMEOUT_MILLIS = 300000; // 5 minutes
@@ -68,5 +74,41 @@ public class SessionManager {
 
     public synchronized void clearUserSessions(User user) {
         sessionMap.values().removeIf(session -> session.getUser().equals(user));
+    }
+
+    public synchronized Session getSessionIfAuthenticated(HttpExchange httpExchange) {
+        Headers requestHeaders = httpExchange.getRequestHeaders();
+
+        if (requestHeaders.containsKey(COOKIE_KEY)) {
+            String cookie = requestHeaders.getFirst(COOKIE_KEY);
+
+            if (cookie.contains(SERVER_SESSION_KEY)) {
+                int startIndex = cookie.indexOf(SERVER_SESSION_KEY) + SERVER_SESSION_KEY.length();
+                int endIndex = cookie.contains(";") ? cookie.indexOf(";", startIndex) : cookie.length();
+                String sessionToken = cookie.substring(startIndex, endIndex);
+
+                Session session = getSessionByToken(sessionToken);
+
+                if (session == null) {
+                    return null;
+                }
+
+                if (!session.getIpAddress().equals(httpExchange.getRemoteAddress().getHostString())) {
+                    return null;
+                }
+
+                if (!session.getUserAgent().equals(requestHeaders.getFirst(USER_AGENT))) {
+                    return null;
+                }
+
+                Logger.info("user={} session found", session.getUser());
+
+                return session;
+            }
+        }
+
+        Logger.info("session was not found for specified sessionId");
+
+        return null;
     }
 }

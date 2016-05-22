@@ -10,12 +10,8 @@ public class InMemoryUserDataBase {
     private static final Map<String, User> USERS = new HashMap<>();
 
     static {
-        User admin = new User();
+        User admin = new User("admin-ubMzc", "admin@gmail.com", "$3cur!tY-SSZ2Q");
 
-        admin.setLogin("admin-ubMzc"); // unique login
-//        String login = "admin-" + RandomStringUtils.random(5, 32, 126, true, true, null, new SecureRandom());
-        admin.setPassword("$3cur!tY-SSZ2Q");
-        admin.setEmail("admin@localhost");
         admin.setStatus(UserStatus.ACTIVE);
 
         USERS.put(admin.getLogin(), admin);
@@ -31,5 +27,9 @@ public class InMemoryUserDataBase {
 
     public synchronized User getUserByLogin(String login) {
         return USERS.get(login);
+    }
+
+    public synchronized void registerNewUser(User newUser) {
+        USERS.put(newUser.getLogin(), newUser);
     }
 }

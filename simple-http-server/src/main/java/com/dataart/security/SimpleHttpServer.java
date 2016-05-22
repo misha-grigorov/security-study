@@ -3,10 +3,14 @@ package com.dataart.security;
 import com.dataart.security.authenticators.FormsAuthenticator;
 import com.dataart.security.authenticators.SimpleBasicAuthenticator;
 import com.dataart.security.handlers.AuthHandler;
+import com.dataart.security.handlers.ChangePasswordHandler;
+import com.dataart.security.handlers.ChangePasswordPageHandler;
 import com.dataart.security.handlers.FileUploadHandler;
 import com.dataart.security.handlers.FormHandler;
 import com.dataart.security.handlers.JsonHandler;
 import com.dataart.security.handlers.LoginPageHandler;
+import com.dataart.security.handlers.RegisterPageHandler;
+import com.dataart.security.handlers.RegistrationHandler;
 import com.dataart.security.handlers.RootHandler;
 import com.sun.net.httpserver.Authenticator;
 import com.sun.net.httpserver.HttpServer;
@@ -63,7 +67,12 @@ public class SimpleHttpServer {
             httpExchange.getResponseBody().close();
         });
         server.createContext("/auth", new AuthHandler()).setAuthenticator(formsAuthenticator);
+        server.createContext("/change-password", new ChangePasswordHandler()).setAuthenticator(formsAuthenticator);
+        server.createContext("/change-password-page", new ChangePasswordPageHandler()).setAuthenticator(formsAuthenticator);
+        server.createContext("/register", new RegistrationHandler());
         server.createContext("/login-page", new LoginPageHandler());
+        server.createContext("/register-page", new RegisterPageHandler());
+
         server.createContext("/json", new JsonHandler()).setAuthenticator(basicAuthenticator);
         server.createContext("/form", new FormHandler()).setAuthenticator(basicAuthenticator);
         server.createContext("/upload", new FileUploadHandler()).setAuthenticator(basicAuthenticator);

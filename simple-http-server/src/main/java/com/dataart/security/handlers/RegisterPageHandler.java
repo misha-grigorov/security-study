@@ -4,11 +4,11 @@ import com.dataart.security.utils.Utils;
 
 import java.io.InputStream;
 
-public class LoginPageHandler extends SingleHtmlPageHandler {
+public class RegisterPageHandler extends SingleHtmlPageHandler {
     private static final String HTML_RESPONSE;
 
     static {
-        InputStream resourceAsStream = LoginPageHandler.class.getClassLoader().getResourceAsStream("forms_auth.html");
+        InputStream resourceAsStream = LoginPageHandler.class.getClassLoader().getResourceAsStream("register.html");
 
         HTML_RESPONSE = Utils.readRequestBody(resourceAsStream);
     }
