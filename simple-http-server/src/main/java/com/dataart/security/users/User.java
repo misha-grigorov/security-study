@@ -2,15 +2,14 @@ package com.dataart.security.users;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.Objects;
+
 public class User {
     private String login;
     private String email;
     private String password;
-    private String ipAddress;
-    private String userAgent;
-    private String session;
     private String salt;
-    private long lastSeen;
+    private UserStatus status;
 
     public User() {
         this.salt = BCrypt.gensalt();
@@ -40,30 +39,6 @@ public class User {
         this.password = BCrypt.hashpw(password, salt);
     }
 
-    public String getIpAddress() {
-        return ipAddress;
-    }
-
-    public void setIpAddress(String ipAddress) {
-        this.ipAddress = ipAddress;
-    }
-
-    public String getUserAgent() {
-        return userAgent;
-    }
-
-    public void setUserAgent(String userAgent) {
-        this.userAgent = userAgent;
-    }
-
-    public String getSession() {
-        return session;
-    }
-
-    public void setSession(String session) {
-        this.session = session;
-    }
-
     public String getSalt() {
         return salt;
     }
@@ -72,17 +47,26 @@ public class User {
         this.salt = salt;
     }
 
-    public long getLastSeen() {
-        return lastSeen;
+    public UserStatus getStatus() {
+        return status;
     }
 
-    public void setLastSeen(long lastSeen) {
-        this.lastSeen = lastSeen;
+    public void setStatus(UserStatus status) {
+        this.status = status;
     }
 
-    public String generateSession() {
-        this.session = BCrypt.hashpw(ipAddress + userAgent + login + lastSeen, salt);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(login, user.login) &&
+                Objects.equals(email, user.email) &&
+                Objects.equals(password, user.password);
+    }
 
-        return this.session;
+    @Override
+    public int hashCode() {
+        return Objects.hash(login, email, password);
     }
 }

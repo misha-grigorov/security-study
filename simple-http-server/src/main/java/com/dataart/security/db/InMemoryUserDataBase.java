@@ -1,18 +1,22 @@
-package com.dataart.security;
+package com.dataart.security.db;
 
 import com.dataart.security.users.User;
+import com.dataart.security.users.UserStatus;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
+import java.util.Map;
 
 public class InMemoryUserDataBase {
-    private static final ConcurrentHashMap<String, User> USERS = new ConcurrentHashMap<>();
+    private static final Map<String, User> USERS = new HashMap<>();
 
     static {
         User admin = new User();
 
-        admin.setLogin("admin");
-        admin.setPassword("password");
+        admin.setLogin("admin-ubMzc"); // unique login
+//        String login = "admin-" + RandomStringUtils.random(5, 32, 126, true, true, null, new SecureRandom());
+        admin.setPassword("$3cur!tY-SSZ2Q");
         admin.setEmail("admin@localhost");
+        admin.setStatus(UserStatus.ACTIVE);
 
         USERS.put(admin.getLogin(), admin);
     }
@@ -25,7 +29,7 @@ public class InMemoryUserDataBase {
         return InMemoryUserDataBaseHolder.HOLDER_INSTANCE;
     }
 
-    public User getUserByLogin(String login) {
+    public synchronized User getUserByLogin(String login) {
         return USERS.get(login);
     }
 }

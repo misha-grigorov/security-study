@@ -1,4 +1,4 @@
-package com.dataart.security;
+package com.dataart.security.authenticators;
 
 import com.sun.net.httpserver.BasicAuthenticator;
 

@@ -1,5 +1,7 @@
 package com.dataart.security;
 
+import com.dataart.security.authenticators.FormsAuthenticator;
+import com.dataart.security.authenticators.SimpleBasicAuthenticator;
 import com.dataart.security.handlers.AuthHandler;
 import com.dataart.security.handlers.FileUploadHandler;
 import com.dataart.security.handlers.FormHandler;
@@ -12,6 +14,8 @@ import org.pmw.tinylog.Logger;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+
+import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
 
 public class SimpleHttpServer {
     private static final int USE_SYSTEM_DEFAULT_BACKLOG = 0;
@@ -52,6 +56,12 @@ public class SimpleHttpServer {
         Authenticator formsAuthenticator = new FormsAuthenticator();
 
         server.createContext("/", new RootHandler()).setAuthenticator(formsAuthenticator);
+        server.createContext("/favicon.ico", httpExchange -> {
+            httpExchange.sendResponseHeaders(HTTP_NOT_FOUND, -1);
+            httpExchange.getRequestBody().close();
+            httpExchange.getResponseBody().flush();
+            httpExchange.getResponseBody().close();
+        });
         server.createContext("/auth", new AuthHandler()).setAuthenticator(formsAuthenticator);
         server.createContext("/login-page", new LoginPageHandler());
         server.createContext("/json", new JsonHandler()).setAuthenticator(basicAuthenticator);
