@@ -14,6 +14,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Utils {
     public static final String COOKIE_KEY = "Cookie";
+    public static final String COOKIE_DELIMITER = ";";
     public static final String SERVER_SESSION_KEY = "id=";
     public static final String USER_AGENT = "User-Agent";
     public static final String FORMS_URL_ENCODED = "application/x-www-form-urlencoded";

@@ -21,6 +21,7 @@ import java.util.Map;
 
 import static com.dataart.security.utils.Utils.CONTENT_TYPE;
 import static com.dataart.security.utils.Utils.FORMS_URL_ENCODED;
+import static com.dataart.security.utils.Utils.SERVER_SESSION_KEY;
 import static com.dataart.security.utils.Utils.USER_AGENT;
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 import static java.net.HttpURLConnection.HTTP_CREATED;
@@ -42,7 +43,7 @@ public class RegistrationHandler extends AbstractHttpHandler {
     protected void chainHandle(HttpExchange httpExchange) throws IOException {
         Session session = SESSION_MANAGER.getSessionIfAuthenticated(httpExchange);
 
-        if (session != null) {
+        if (session != null && session.getUser().getStatus() == UserStatus.ACTIVE) {
             Logger.info("Authenticated user tried to register. user={}", session.getUser().getLogin());
 
             badRequest(HTTP_BAD_REQUEST, httpExchange);
@@ -71,14 +72,16 @@ public class RegistrationHandler extends AbstractHttpHandler {
             return;
         }
 
-        newUser.setStatus(UserStatus.ACTIVE);
+        newUser.setStatus(UserStatus.RESET_PASSWORD);
 
-        Session newSession = new Session(newUser, httpExchange.getRemoteAddress().getHostString(),
-                httpExchange.getRequestHeaders().getFirst(USER_AGENT));
+        Session newSession = new Session(newUser, httpExchange.getRequestHeaders().getFirst(USER_AGENT),
+                httpExchange.getRemoteAddress().getHostString());
 
         SESSION_MANAGER.newSession(newSession);
         AUTH_METRIC_MANAGER.loginSuccess(newUser);
 
+        httpExchange.getResponseHeaders().set("Set-Cookie", SERVER_SESSION_KEY + newSession.getToken() +
+                "; path=/; domain=127.0.0.1; httponly");
         httpExchange.getResponseHeaders().set("Location", "/change-password-page");
         httpExchange.sendResponseHeaders(HTTP_MOVED_TEMP, -1);
 

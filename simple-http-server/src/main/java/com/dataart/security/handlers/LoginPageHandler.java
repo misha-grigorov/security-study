@@ -1,6 +1,7 @@
 package com.dataart.security.handlers;
 
 import com.dataart.security.utils.Utils;
+import com.sun.net.httpserver.HttpExchange;
 
 import java.io.InputStream;
 
@@ -14,7 +15,7 @@ public class LoginPageHandler extends SingleHtmlPageHandler {
     }
 
     @Override
-    protected String getResponse() {
+    protected String getResponse(HttpExchange httpExchange) {
         return HTML_RESPONSE;
     }
 }

@@ -77,8 +77,8 @@ public class FormsAuthenticator extends Authenticator {
         }
 
         if (BCrypt.checkpw(password, user.getPassword())) {
-            Session newSession = new Session(user, httpExchange.getRemoteAddress().getHostString(),
-                    requestHeaders.getFirst(USER_AGENT));
+            Session newSession = new Session(user, requestHeaders.getFirst(USER_AGENT),
+                    httpExchange.getRemoteAddress().getHostString());
 
             SESSION_MANAGER.newSession(newSession);
             AUTH_METRIC_MANAGER.loginSuccess(user);

@@ -26,10 +26,18 @@ public class InMemoryUserDataBase {
     }
 
     public synchronized User getUserByLogin(String login) {
+        if (login == null) {
+            return null;
+        }
+
         return USERS.get(login);
     }
 
     public synchronized void registerNewUser(User newUser) {
+        if (newUser == null) {
+            return;
+        }
+
         USERS.put(newUser.getLogin(), newUser);
     }
 }
