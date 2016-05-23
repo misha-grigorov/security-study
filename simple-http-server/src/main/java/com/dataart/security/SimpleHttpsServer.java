@@ -14,22 +14,32 @@ import com.dataart.security.handlers.RegisterPageHandler;
 import com.dataart.security.handlers.RegistrationHandler;
 import com.dataart.security.handlers.RootHandler;
 import com.sun.net.httpserver.Authenticator;
-import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.HttpsConfigurator;
+import com.sun.net.httpserver.HttpsParameters;
+import com.sun.net.httpserver.HttpsServer;
 import org.pmw.tinylog.Logger;
 
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLParameters;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.security.KeyStore;
 
 import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
 
-public class SimpleHttpServer {
+public class SimpleHttpsServer {
     private static final int USE_SYSTEM_DEFAULT_BACKLOG = 0;
 
     private int port;
     private String host;
-    private HttpServer server;
+    private HttpsServer server;
 
-    public SimpleHttpServer(String host, int port) {
+    public SimpleHttpsServer(String host, int port) {
         this.host = host;
         this.port = port;
     }
@@ -37,7 +47,30 @@ public class SimpleHttpServer {
     public void start() {
         try {
             InetSocketAddress socketAddress = new InetSocketAddress(host, port);
-            server = HttpServer.create(socketAddress, USE_SYSTEM_DEFAULT_BACKLOG);
+
+            final SSLContext sslContext = createSslContext();
+
+            server = HttpsServer.create(socketAddress, USE_SYSTEM_DEFAULT_BACKLOG);
+
+            server.setHttpsConfigurator(new HttpsConfigurator(sslContext) {
+                @Override
+                public void configure(HttpsParameters httpsParameters) {
+                    try {
+                        // initialise the SSL context
+                        SSLContext c = SSLContext.getDefault();
+                        SSLEngine engine = c.createSSLEngine();
+                        httpsParameters.setNeedClientAuth(false);
+                        httpsParameters.setCipherSuites(engine.getEnabledCipherSuites());
+                        httpsParameters.setProtocols(engine.getEnabledProtocols());
+
+                        // get the default parameters
+                        SSLParameters defaultSSLParameters = c.getDefaultSSLParameters();
+                        httpsParameters.setSSLParameters(defaultSSLParameters);
+                    } catch (Exception ex) {
+                        Logger.error("Failed to create HTTPS server", ex);
+                    }
+                }
+            });
 
             Logger.info("Server started at {}:{}", socketAddress.getHostString(), socketAddress.getPort());
 
@@ -45,7 +78,7 @@ public class SimpleHttpServer {
 
             server.setExecutor(null);
             server.start();
-        } catch (IOException e) {
+        } catch (Exception e) {
             Logger.warn(e.getMessage());
         }
     }
@@ -78,5 +111,28 @@ public class SimpleHttpServer {
         server.createContext("/json", new JsonHandler()).setAuthenticator(basicAuthenticator);
         server.createContext("/form", new FormHandler()).setAuthenticator(basicAuthenticator);
         server.createContext("/upload", new FileUploadHandler()).setAuthenticator(basicAuthenticator);
+    }
+
+    protected SSLContext createSslContext() throws Exception {
+        SSLContext sslContext = null;
+
+        KeyStore keyStore = KeyStore.getInstance("JKS");
+
+        keyStore.load(SimpleHttpsServer.class.getClassLoader().getResourceAsStream("serverkeystore"),
+                "$3cur!tY-SSZ2Q".toCharArray());
+
+        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
+
+        keyManagerFactory.init(keyStore, "$3cur!tY-SSZ2Q".toCharArray());
+
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("SunX509");
+
+        trustManagerFactory.init(keyStore);
+
+        sslContext = SSLContext.getInstance("TLSv1.2");
+
+        sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
+
+        return sslContext;
     }
 }
