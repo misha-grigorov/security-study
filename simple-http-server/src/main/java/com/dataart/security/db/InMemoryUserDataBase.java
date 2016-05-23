@@ -33,6 +33,20 @@ public class InMemoryUserDataBase {
         return USERS.get(login);
     }
 
+    public synchronized User getUserByEmail(String email) {
+        if (email == null) {
+            return null;
+        }
+
+        for (User user : USERS.values()) {
+            if (user.getEmail().equalsIgnoreCase(email)) {
+                return user;
+            }
+        }
+
+        return null;
+    }
+
     public synchronized void registerNewUser(User newUser) {
         if (newUser == null) {
             return;

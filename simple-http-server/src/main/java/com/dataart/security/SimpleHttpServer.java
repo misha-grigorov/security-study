@@ -9,6 +9,7 @@ import com.dataart.security.handlers.FileUploadHandler;
 import com.dataart.security.handlers.FormHandler;
 import com.dataart.security.handlers.JsonHandler;
 import com.dataart.security.handlers.LoginPageHandler;
+import com.dataart.security.handlers.RecoverPageHandler;
 import com.dataart.security.handlers.RegisterPageHandler;
 import com.dataart.security.handlers.RegistrationHandler;
 import com.dataart.security.handlers.RootHandler;
@@ -72,6 +73,7 @@ public class SimpleHttpServer {
         server.createContext("/register", new RegistrationHandler());
         server.createContext("/login-page", new LoginPageHandler());
         server.createContext("/register-page", new RegisterPageHandler());
+        server.createContext("/recovery-page", new RecoverPageHandler());
 
         server.createContext("/json", new JsonHandler()).setAuthenticator(basicAuthenticator);
         server.createContext("/form", new FormHandler()).setAuthenticator(basicAuthenticator);

@@ -2,6 +2,7 @@ package com.dataart.security.services;
 
 import com.dataart.security.db.InMemoryUserDataBase;
 import com.dataart.security.users.User;
+import com.dataart.security.users.UserStatus;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.pmw.tinylog.Logger;
 
@@ -38,6 +39,14 @@ public class RegistrationService {
     }
 
     public synchronized static RegistrationToken registerNewUser(String email) {
+        User user = DATA_BASE.getUserByEmail(email);
+
+        if (user != null) {
+            Logger.info("User with such e-mail already registered. e-mail={}", email);
+
+            return null;
+        }
+
         String newUserLogin = null;
 
         do {
@@ -53,6 +62,32 @@ public class RegistrationService {
         REGISTRATION_TOKENS.put(registrationToken.getTokenId(), registrationToken);
 
         return registrationToken;
+    }
+
+    public synchronized static RegistrationToken recoverUser(String email) {
+        User user = DATA_BASE.getUserByEmail(email);
+
+        if (user == null) {
+            return null;
+        }
+
+        removeAllPreviousTokensForUser(user);
+
+        if (user.getStatus() == UserStatus.BLOCKED) {
+            Logger.info("Blocked user tried to recover password. userLogin={}", user.getLogin());
+
+            return null;
+        }
+
+        RegistrationToken registrationToken = getUniqueRegistrationToken(user);
+
+        REGISTRATION_TOKENS.put(registrationToken.getTokenId(), registrationToken);
+
+        return registrationToken;
+    }
+
+    public synchronized static void removeAllPreviousTokensForUser(User user) {
+        REGISTRATION_TOKENS.values().removeIf(registrationToken -> registrationToken.getUser().equals(user));
     }
 
     public synchronized static User checkRegistrationToken(String tokenId) {

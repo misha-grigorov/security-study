@@ -1,5 +1,6 @@
 package com.dataart.security;
 
+import com.dataart.security.services.NotificationService;
 import com.dataart.security.users.User;
 import com.dataart.security.users.UserStatus;
 import org.pmw.tinylog.Logger;
@@ -41,7 +42,8 @@ public class AuthMetricManager {
 
             user.setStatus(UserStatus.BLOCKED);
 
-            //sendEmail();
+            NotificationService.sendEmail(user.getEmail(), "Your account was temporarily disabled due to strange activity!" +
+                    "\nPlease contact the administrator");
 
             return UserStatus.BLOCKED;
         }

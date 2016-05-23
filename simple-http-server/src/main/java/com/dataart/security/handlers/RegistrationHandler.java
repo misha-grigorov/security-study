@@ -44,7 +44,7 @@ public class RegistrationHandler extends AbstractHttpHandler {
         Session session = SESSION_MANAGER.getSessionIfAuthenticated(httpExchange);
 
         if (session != null && session.getUser().getStatus() == UserStatus.ACTIVE) {
-            Logger.info("Authenticated user tried to register. user={}", session.getUser().getLogin());
+            Logger.info("Authenticated user tried to register/recover. user={}", session.getUser().getLogin());
 
             badRequest(HTTP_BAD_REQUEST, httpExchange);
 
@@ -99,16 +99,34 @@ public class RegistrationHandler extends AbstractHttpHandler {
         String request = Utils.readRequestBody(httpExchange.getRequestBody());
         Map<String, String> params = Utils.parseQuery(request);
         String email = params.get("email");
+        String action = params.get("action");
 
-        if (!EMAIL_VALIDATOR.isValid(email)) {
-            Logger.info("Invalid email address was used for registration. email={}", email);
+        if (!isActionValid(action) || !EMAIL_VALIDATOR.isValid(email)) {
+            Logger.info("Invalid input was used for registration/recovery. email={}, action={}", email, action);
 
             badRequest(HTTP_BAD_REQUEST, httpExchange);
 
             return;
         }
 
-        RegistrationToken registrationToken = RegistrationService.registerNewUser(email);
+        RegistrationToken registrationToken = null;
+
+        if (action.equals("register")) {
+            registrationToken = RegistrationService.registerNewUser(email);
+        }
+
+        if (action.equals("recover")) {
+            registrationToken = RegistrationService.recoverUser(email);
+        }
+
+        if (registrationToken == null) {
+            Logger.info("invalid registration token. action={}, email={}", action, email);
+
+            badRequest(HTTP_BAD_REQUEST, httpExchange);
+
+            return;
+        }
+
         String registrationLink = "http://127.0.0.1:55555/register?token=" +
                 URLEncoder.encode(registrationToken.getTokenId(), UTF_8.name());
 
@@ -117,5 +135,9 @@ public class RegistrationHandler extends AbstractHttpHandler {
 
         httpExchange.sendResponseHeaders(HTTP_CREATED, -1);
         closeResponseBodyStream(httpExchange.getResponseBody());
+    }
+
+    private boolean isActionValid(String action) {
+        return action != null && (action.equals("register") || action.equals("recover"));
     }
 }
