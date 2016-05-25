@@ -52,7 +52,7 @@ public class AuthMetricManager {
     }
 
     public synchronized void loginSuccess(User user) {
-        Logger.info("user={} logged time={}", user.getLogin(), System.currentTimeMillis());
+        Logger.info("user={} logged in. time={}", user.getLogin(), System.currentTimeMillis());
 
         FAILED_LOGIN_MAP.put(user, 0);
     }

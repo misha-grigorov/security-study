@@ -1,8 +1,10 @@
 package com.dataart.security.users;
 
-import org.mindrot.jbcrypt.BCrypt;
+import com.dataart.security.utils.Utils;
 
 import java.util.Objects;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class User {
     private String login;
@@ -10,12 +12,14 @@ public class User {
     private String password;
     private String salt;
     private UserStatus status;
+    private UserRole role;
 
     public User(String login, String email, String password) {
         this.login = login;
         this.email = email;
         this.status = UserStatus.SUSPENDED;
-        this.salt = BCrypt.gensalt();
+        this.role = UserRole.BASIC;
+
         setPassword(password);
     }
 
@@ -40,7 +44,8 @@ public class User {
     }
 
     public void setPassword(String password) {
-        this.password = BCrypt.hashpw(password, salt);
+        this.salt = Utils.generateSecureRandom();
+        this.password = Utils.hashPassword(password.toCharArray(), salt.getBytes(UTF_8));
     }
 
     public String getSalt() {
@@ -57,6 +62,14 @@ public class User {
 
     public void setStatus(UserStatus status) {
         this.status = status;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 
     @Override

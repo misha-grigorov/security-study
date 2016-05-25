@@ -11,7 +11,6 @@ import com.sun.net.httpserver.Authenticator;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpPrincipal;
-import org.mindrot.jbcrypt.BCrypt;
 import org.pmw.tinylog.Logger;
 
 import java.util.Map;
@@ -38,8 +37,6 @@ public class FormsAuthenticator extends Authenticator {
         Session session = SESSION_MANAGER.getSessionIfAuthenticated(httpExchange);
 
         if (session != null) {
-            SESSION_MANAGER.updateSession(session, System.currentTimeMillis());
-
             return successAuth(responseHeaders, session.getToken(), session.getUser().getLogin());
         }
 
@@ -76,7 +73,7 @@ public class FormsAuthenticator extends Authenticator {
             return retryAuth(responseHeaders);
         }
 
-        if (BCrypt.checkpw(password, user.getPassword())) {
+        if (Utils.checkPassword(password, user.getSalt(), user.getPassword())) {
             Session newSession = new Session(user, requestHeaders.getFirst(USER_AGENT),
                     httpExchange.getRemoteAddress().getHostString());
 

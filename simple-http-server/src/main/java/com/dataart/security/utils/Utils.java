@@ -2,11 +2,22 @@ package com.dataart.security.utils;
 
 import org.pmw.tinylog.Logger;
 
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.URLDecoder;
+import java.nio.ByteBuffer;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +30,7 @@ public class Utils {
     public static final String USER_AGENT = "User-Agent";
     public static final String FORMS_URL_ENCODED = "application/x-www-form-urlencoded";
     public static final String CONTENT_TYPE = "Content-Type";
+    public static final String TEXT_HTML_CHARSET_UTF_8 = "text/html; charset=utf-8";
 
     private Utils() {
     }
@@ -80,5 +92,37 @@ public class Utils {
         }
 
         return result;
+    }
+
+    public static String generateSecureRandom() {
+        try {
+            SecureRandom secureRandom = SecureRandom.getInstanceStrong();
+
+            return new BigInteger(130, secureRandom).toString(32);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String hashPassword(final char[] password, final byte[] salt) {
+        return new String(hashPassword(password, salt, 10000, 256), UTF_8);
+    }
+
+    public static byte[] hashPassword(final char[] password, final byte[] salt, final int iterations, final int keyLength) {
+        try {
+            SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
+            PBEKeySpec pbeKeySpec = new PBEKeySpec(password, salt, iterations, keyLength);
+            SecretKey secretKey = secretKeyFactory.generateSecret(pbeKeySpec);
+
+            return secretKey.getEncoded();
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static boolean checkPassword(String password, String salt, String hashedPassword) {
+        String newHashedPassword = hashPassword(password.toCharArray(), salt.getBytes(UTF_8));
+
+        return hashedPassword.equals(newHashedPassword);
     }
 }

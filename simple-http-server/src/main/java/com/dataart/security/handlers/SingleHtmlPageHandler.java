@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.dataart.security.utils.Utils.CONTENT_TYPE;
+import static com.dataart.security.utils.Utils.TEXT_HTML_CHARSET_UTF_8;
 import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
 import static java.net.HttpURLConnection.HTTP_OK;
 
@@ -37,7 +38,7 @@ public abstract class SingleHtmlPageHandler extends AbstractHttpHandler {
             return;
         }
 
-        httpExchange.getResponseHeaders().add(CONTENT_TYPE, "text/html; charset=utf-8");
+        httpExchange.getResponseHeaders().add(CONTENT_TYPE, TEXT_HTML_CHARSET_UTF_8);
         httpExchange.sendResponseHeaders(HTTP_OK, response.length());
 
         closeRequestBodyStream(requestBody);

@@ -20,7 +20,7 @@ public class RegistrationService {
     }
 
     public static String getUniqueUserLogin() {
-        return "user-" + generateUniqueString(5);
+        return "user-" + generateUniqueString(5).toLowerCase();
     }
 
     public static String getUniquePassword() {

@@ -1,6 +1,7 @@
 package com.dataart.security.db;
 
 import com.dataart.security.users.User;
+import com.dataart.security.users.UserRole;
 import com.dataart.security.users.UserStatus;
 
 import java.util.HashMap;
@@ -10,9 +11,10 @@ public class InMemoryUserDataBase {
     private static final Map<String, User> USERS = new HashMap<>();
 
     static {
-        User admin = new User("admin-ubMzc", "admin@gmail.com", "$3cur!tY-SSZ2Q");
+        User admin = new User("admin-ubmzc", "admin@gmail.com", "$3cur!tY-SSZ2Q");
 
         admin.setStatus(UserStatus.ACTIVE);
+        admin.setRole(UserRole.ADMIN);
 
         USERS.put(admin.getLogin(), admin);
     }
@@ -30,7 +32,7 @@ public class InMemoryUserDataBase {
             return null;
         }
 
-        return USERS.get(login);
+        return USERS.get(login.toLowerCase());
     }
 
     public synchronized User getUserByEmail(String email) {

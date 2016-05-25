@@ -1,7 +1,7 @@
 package com.dataart.security.session;
 
 import com.dataart.security.users.User;
-import org.mindrot.jbcrypt.BCrypt;
+import com.dataart.security.utils.Utils;
 
 public class Session {
     private User user;
@@ -18,7 +18,7 @@ public class Session {
         this.userAgent = userAgent;
         this.ipAddress = ipAddress;
         this.lastSeen = System.currentTimeMillis();
-        this.token = updateToken(lastSeen);
+        this.token = updateToken();
     }
 
     public User getUser() {
@@ -61,7 +61,11 @@ public class Session {
         this.lastSeen = lastSeen;
     }
 
-    public String updateToken(long lastSeen) {
-        return BCrypt.hashpw(ipAddress + userAgent + user.getLogin() + lastSeen, user.getSalt());
+    public String updateToken() {
+        String randomValue = Utils.generateSecureRandom();
+
+        setToken(randomValue);
+
+        return randomValue;
     }
 }

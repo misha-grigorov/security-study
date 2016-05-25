@@ -1,0 +1,17 @@
+@args String userLogin
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+</head>
+<body>
+<h1>Welcome to our server, @userLogin!</h1>
+
+<a href="/change-password-page">Change password</a>
+<br/>
+<br/>
+<form method="post" action="/logout">
+    <input type="submit" value="Logout"/>
+</form>
+</body>
+</html>

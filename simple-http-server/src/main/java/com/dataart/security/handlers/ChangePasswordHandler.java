@@ -5,7 +5,6 @@ import com.dataart.security.users.User;
 import com.dataart.security.users.UserStatus;
 import com.dataart.security.utils.Utils;
 import com.sun.net.httpserver.HttpExchange;
-import org.mindrot.jbcrypt.BCrypt;
 import org.pmw.tinylog.Logger;
 
 import java.io.IOException;
@@ -19,7 +18,7 @@ import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 import static java.net.HttpURLConnection.HTTP_OK;
 
 public class ChangePasswordHandler extends AbstractHttpHandler {
-    private static final String SPECIAL_CHARACTERS = "/*!@#$%^&*()\"{}_[]|\\?/<>,.";
+    private static final String SPECIAL_CHARACTERS = " /*!@#$%^&*()\"{}_[]|\\?/<>,.";
     private static final List<String> ALLOWED_METHODS = Arrays.asList("POST");
     private static final InMemoryUserDataBase DATA_BASE = InMemoryUserDataBase.getInstance();
 
@@ -65,12 +64,26 @@ public class ChangePasswordHandler extends AbstractHttpHandler {
     }
 
     private void handleReset(User user, Map<String, String> params, HttpExchange httpExchange) throws IOException {
+        doHandle(user, params, httpExchange, false);
+    }
+
+    private void handleChange(User user, Map<String, String> params, HttpExchange httpExchange) throws IOException {
+        doHandle(user, params, httpExchange, true);
+    }
+
+    private void doHandle(User user, Map<String, String> params, HttpExchange httpExchange, boolean checkOldPassword) throws IOException {
         String newPassword = params.get("new-password");
         String repeatNewPassword = params.get("repeat-new-password");
 
         if (newPassword == null || repeatNewPassword == null || !newPassword.equals(repeatNewPassword)) {
             Logger.info("Invalid passwords for reset");
 
+            badRequest(HTTP_BAD_REQUEST, httpExchange);
+
+            return;
+        }
+
+        if (checkOldPassword && !checkOldPassword(params, user)) {
             badRequest(HTTP_BAD_REQUEST, httpExchange);
 
             return;
@@ -94,20 +107,10 @@ public class ChangePasswordHandler extends AbstractHttpHandler {
         closeResponseBodyStream(httpExchange.getResponseBody());
     }
 
-    private void handleChange(User user, Map<String, String> params, HttpExchange httpExchange) throws IOException {
-        if (!checkOldPassword(params, user)) {
-            badRequest(HTTP_BAD_REQUEST, httpExchange);
-
-            return;
-        }
-
-        handleReset(user, params, httpExchange);
-    }
-
     private boolean checkOldPassword(Map<String, String> params, User user) {
         String oldPassword = params.get("old-password");
 
-        if (oldPassword == null || !BCrypt.checkpw(oldPassword, user.getPassword())) {
+        if (oldPassword == null || !Utils.checkPassword(oldPassword, user.getSalt(), user.getPassword())) {
             return false;
         }
 

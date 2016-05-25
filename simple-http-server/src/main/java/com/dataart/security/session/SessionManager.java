@@ -71,11 +71,27 @@ public class SessionManager {
             return;
         }
 
+        session.setLastSeen(lastSeen);
+
         String previousToken = session.getToken();
-        String newToken = session.updateToken(lastSeen);
+        String newToken = session.updateToken();
 
         SESSION_MAP.remove(previousToken);
         SESSION_MAP.put(newToken, session);
+    }
+
+    public synchronized boolean removeSession(String sessionToken) {
+        if (sessionToken == null) {
+            return false;
+        }
+
+        if (SESSION_MAP.containsKey(sessionToken)) {
+            SESSION_MAP.remove(sessionToken);
+
+            return true;
+        }
+
+        return false;
     }
 
     public synchronized void clearUserSessions(User user) {
@@ -117,7 +133,7 @@ public class SessionManager {
                 return null;
             }
 
-            Logger.info("user={} session found", session.getUser());
+            Logger.info("userLogin={} session found", session.getUser().getLogin());
 
             return session;
         }
@@ -127,7 +143,7 @@ public class SessionManager {
         return null;
     }
 
-    private String getSessionTokenFromCookie(String cookie) {
+    public synchronized String getSessionTokenFromCookie(String cookie) {
         String[] cookieTokens = cookie.split(COOKIE_DELIMITER);
         String sessionToken = null;
 
