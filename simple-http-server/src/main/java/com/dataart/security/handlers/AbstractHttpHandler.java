@@ -10,7 +10,9 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.util.List;
 
+import static com.dataart.security.utils.Utils.SERVER_SESSION_KEY;
 import static java.net.HttpURLConnection.HTTP_BAD_METHOD;
+import static java.net.HttpURLConnection.HTTP_MOVED_TEMP;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public abstract class AbstractHttpHandler implements HttpHandler {
@@ -53,5 +55,15 @@ public abstract class AbstractHttpHandler implements HttpHandler {
         responseBody.write(response.getBytes(UTF_8));
 
         closeResponseBodyStream(responseBody);
+    }
+
+    protected void redirect(String location, String sessionId, HttpExchange httpExchange) throws IOException {
+        httpExchange.getResponseHeaders().set("Set-Cookie", SERVER_SESSION_KEY + sessionId +
+                "; path=/; domain=127.0.0.1; httponly");
+        httpExchange.getResponseHeaders().set("Location", location);
+        httpExchange.sendResponseHeaders(HTTP_MOVED_TEMP, -1);
+
+        closeRequestBodyStream(httpExchange.getRequestBody());
+        closeResponseBodyStream(httpExchange.getResponseBody());
     }
 }

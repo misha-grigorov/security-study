@@ -1,5 +1,6 @@
 package com.dataart.security.utils;
 
+import com.dataart.security.users.User;
 import org.pmw.tinylog.Logger;
 
 import javax.crypto.SecretKey;
@@ -11,13 +12,9 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.URLDecoder;
-import java.nio.ByteBuffer;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Arrays;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -120,9 +117,9 @@ public class Utils {
         }
     }
 
-    public static boolean checkPassword(String password, String salt, String hashedPassword) {
-        String newHashedPassword = hashPassword(password.toCharArray(), salt.getBytes(UTF_8));
+    public static boolean checkPassword(String password, User user) {
+        String newHashedPassword = hashPassword(password.toCharArray(), user.getSalt().getBytes(UTF_8));
 
-        return hashedPassword.equals(newHashedPassword);
+        return user.getPassword().equals(newHashedPassword);
     }
 }

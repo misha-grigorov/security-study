@@ -11,9 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.dataart.security.utils.Utils.COOKIE_KEY;
-import static com.dataart.security.utils.Utils.SERVER_SESSION_KEY;
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
-import static java.net.HttpURLConnection.HTTP_MOVED_TEMP;
 
 public class LogoutHandler extends AbstractHttpHandler {
     private static final List<String> ALLOWED_METHODS = Arrays.asList("POST");
@@ -35,18 +33,16 @@ public class LogoutHandler extends AbstractHttpHandler {
             Logger.warn("Some issues with auth userLogin={}", userLogin);
 
             badRequest(HTTP_BAD_REQUEST, httpExchange);
+
+            return;
         }
 
         String sessionToken = SESSION_MANAGER.getSessionTokenFromCookie(httpExchange.getRequestHeaders().getFirst(COOKIE_KEY));
 
         SESSION_MANAGER.removeSession(sessionToken);
 
-        httpExchange.getResponseHeaders().set("Set-Cookie", SERVER_SESSION_KEY + "" +
-                "; path=/; domain=127.0.0.1; httponly");
-        httpExchange.getResponseHeaders().set("Location", "/login-page");
-        httpExchange.sendResponseHeaders(HTTP_MOVED_TEMP, -1);
+        Logger.info("User logged out. userLogin={}", user.getLogin());
 
-        closeRequestBodyStream(httpExchange.getRequestBody());
-        closeResponseBodyStream(httpExchange.getResponseBody());
+        redirect("/login-page", "", httpExchange);
     }
 }

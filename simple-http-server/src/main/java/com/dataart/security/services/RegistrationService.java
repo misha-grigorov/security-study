@@ -90,7 +90,7 @@ public class RegistrationService {
         REGISTRATION_TOKENS.values().removeIf(registrationToken -> registrationToken.getUser().equals(user));
     }
 
-    public synchronized static User checkRegistrationToken(String tokenId) {
+    public synchronized static User checkRegistrationToken(String tokenId, boolean removeToken) {
         if (tokenId == null) {
             Logger.info("Invalid registration token");
 
@@ -105,7 +105,9 @@ public class RegistrationService {
             return null;
         }
 
-        REGISTRATION_TOKENS.remove(tokenId);
+        if (removeToken) {
+            REGISTRATION_TOKENS.remove(tokenId);
+        }
 
         if (registrationToken.getValidUntil() - System.currentTimeMillis() >= TOKEN_VALID_TIMEOUT_MILLIS) {
             Logger.info("Registration token expired, registration failed");

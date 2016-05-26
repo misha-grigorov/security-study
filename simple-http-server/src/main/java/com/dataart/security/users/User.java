@@ -17,7 +17,7 @@ public class User {
     public User(String login, String email, String password) {
         this.login = login;
         this.email = email;
-        this.status = UserStatus.SUSPENDED;
+        this.status = UserStatus.NOT_VERIFIED;
         this.role = UserRole.BASIC;
 
         setPassword(password);

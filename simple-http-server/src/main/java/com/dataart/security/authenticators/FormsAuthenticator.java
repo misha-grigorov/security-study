@@ -1,7 +1,8 @@
 package com.dataart.security.authenticators;
 
-import com.dataart.security.AuthMetricManager;
+import com.dataart.security.auth.AuthMetricManager;
 import com.dataart.security.db.InMemoryUserDataBase;
+import com.dataart.security.services.RegistrationService;
 import com.dataart.security.utils.Utils;
 import com.dataart.security.session.Session;
 import com.dataart.security.session.SessionManager;
@@ -11,7 +12,6 @@ import com.sun.net.httpserver.Authenticator;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpPrincipal;
-import org.pmw.tinylog.Logger;
 
 import java.util.Map;
 
@@ -40,11 +40,44 @@ public class FormsAuthenticator extends Authenticator {
             return successAuth(responseHeaders, session.getToken(), session.getUser().getLogin());
         }
 
-        if (requestMethod.equals("POST") && httpExchange.getRequestURI().getPath().equals("/auth")) {
-            return tryToAuthenticate(httpExchange);
+        if (requestMethod.equals("POST")) {
+            String path = httpExchange.getRequestURI().getPath();
+
+            if (path.equals("/auth")) {
+                return tryToAuthenticate(httpExchange);
+            } else if (path.equals("/change-password")) {
+                return checkRegistrationToken(httpExchange);
+            }
         }
 
         return redirectToLoginPage(responseHeaders);
+    }
+
+    private Result checkRegistrationToken(HttpExchange httpExchange) {
+        Headers requestHeaders = httpExchange.getRequestHeaders();
+
+        if (!FORMS_URL_ENCODED.equals(requestHeaders.getFirst(CONTENT_TYPE))) {
+            return new Failure(HTTP_BAD_REQUEST);
+        }
+
+        String request = Utils.readRequestBody(httpExchange.getRequestBody(), false);
+        Map<String, String> params = Utils.parseQuery(request);
+        String tokenId = params.get("tokenId");
+        User user = RegistrationService.checkRegistrationToken(tokenId, true);
+
+        if (user == null) {
+            return new Failure(HTTP_BAD_REQUEST);
+        }
+
+        String referer = requestHeaders.getFirst("Referer");
+
+        if (referer == null || !referer.contains(tokenId)) {
+            return new Failure(HTTP_BAD_REQUEST);
+        }
+
+        httpExchange.setAttribute("change-password-params", params);
+
+        return new Success(new HttpPrincipal(user.getLogin(), REALM));
     }
 
     private Result tryToAuthenticate(HttpExchange httpExchange) {
@@ -67,13 +100,11 @@ public class FormsAuthenticator extends Authenticator {
 
         User user = DATA_BASE.getUserByLogin(login);
 
-        if (user == null || user.getStatus() != UserStatus.ACTIVE) {
-            Logger.info("Log in failed: invalid username or non-active user");
-
+        if (!AUTH_METRIC_MANAGER.checkUserStatus(user)) {
             return retryAuth(responseHeaders);
         }
 
-        if (Utils.checkPassword(password, user.getSalt(), user.getPassword())) {
+        if (Utils.checkPassword(password, user)) {
             Session newSession = new Session(user, requestHeaders.getFirst(USER_AGENT),
                     httpExchange.getRemoteAddress().getHostString());
 
@@ -84,7 +115,7 @@ public class FormsAuthenticator extends Authenticator {
         } else {
             UserStatus userStatus = AUTH_METRIC_MANAGER.loginFail(user);
 
-            if (userStatus == UserStatus.BLOCKED) {
+            if (userStatus == UserStatus.SUSPENDED) {
                 SESSION_MANAGER.clearUserSessions(user);
             }
 

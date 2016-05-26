@@ -15,7 +15,7 @@ import static com.dataart.security.utils.Utils.SERVER_SESSION_KEY;
 import static com.dataart.security.utils.Utils.USER_AGENT;
 
 public class SessionManager {
-    private static final int SESSION_EXPIRED_TIMEOUT_MILLIS = 300000; // 5 minutes
+    private static final int SESSION_EXPIRED_TIMEOUT_MILLIS = 900_000; // 15 minutes
     private static final Map<String, Session> SESSION_MAP = new HashMap<>();
 
     private static class SessionManagerHolder {
