@@ -12,13 +12,13 @@ public class User {
     private String password;
     private String salt;
     private UserStatus status;
-    private UserRole role;
+    private UserGroup userGroup;
 
     public User(String login, String email, String password) {
         this.login = login;
         this.email = email;
         this.status = UserStatus.NOT_VERIFIED;
-        this.role = UserRole.BASIC;
+        this.userGroup = UserGroup.USER;
 
         setPassword(password);
     }
@@ -64,12 +64,12 @@ public class User {
         this.status = status;
     }
 
-    public UserRole getRole() {
-        return role;
+    public UserGroup getUserGroup() {
+        return userGroup;
     }
 
-    public void setRole(UserRole role) {
-        this.role = role;
+    public void setUserGroup(UserGroup userGroup) {
+        this.userGroup = userGroup;
     }
 
     @Override

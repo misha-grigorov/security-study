@@ -14,6 +14,8 @@ import com.dataart.security.handlers.RecoverPageHandler;
 import com.dataart.security.handlers.RegisterPageHandler;
 import com.dataart.security.handlers.RegistrationHandler;
 import com.dataart.security.handlers.RootHandler;
+import com.dataart.security.handlers.SimpleResourceHandler;
+import com.dataart.security.handlers.SimpleResourcePageHandler;
 import com.sun.net.httpserver.Authenticator;
 import com.sun.net.httpserver.HttpServer;
 import org.pmw.tinylog.Logger;
@@ -76,6 +78,9 @@ public class SimpleHttpServer {
         server.createContext("/login-page", new LoginPageHandler());
         server.createContext("/register-page", new RegisterPageHandler());
         server.createContext("/recovery-page", new RecoverPageHandler());
+
+        server.createContext("/simple-resource-page", new SimpleResourcePageHandler()).setAuthenticator(formsAuthenticator);
+        server.createContext("/simple-resource", new SimpleResourceHandler()).setAuthenticator(formsAuthenticator);
 
         server.createContext("/json", new JsonHandler()).setAuthenticator(basicAuthenticator);
         server.createContext("/form", new FormHandler()).setAuthenticator(basicAuthenticator);

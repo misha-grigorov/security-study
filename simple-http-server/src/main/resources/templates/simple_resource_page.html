@@ -1,0 +1,24 @@
+@args boolean canRead, boolean canCreate, boolean canUpdate, boolean canDelete
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Resource</title>
+</head>
+<body>
+@if (canRead) {
+    <input type="submit" value="read"/>
+}
+@if (canCreate) {
+<input type="submit" value="create"/>
+}
+@if (canUpdate) {
+<form method="post" action="/simple-resource">
+    <input type="submit" value="update"/>
+    <input type="hidden" name="action" value="update"/>
+</form>
+}
+@if (canDelete) {
+<input type="submit" value="delete"/>
+}
+</body>
+</html>

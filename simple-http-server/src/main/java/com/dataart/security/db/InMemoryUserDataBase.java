@@ -1,7 +1,7 @@
 package com.dataart.security.db;
 
 import com.dataart.security.users.User;
-import com.dataart.security.users.UserRole;
+import com.dataart.security.users.UserGroup;
 import com.dataart.security.users.UserStatus;
 
 import java.util.HashMap;
@@ -14,7 +14,7 @@ public class InMemoryUserDataBase {
         User admin = new User("admin-ubmzc", "admin@gmail.com", "$3cur!tY-SSZ2Q");
 
         admin.setStatus(UserStatus.ACTIVE);
-        admin.setRole(UserRole.ADMIN);
+        admin.setUserGroup(UserGroup.ADMIN);
 
         USERS.put(admin.getLogin(), admin);
     }
