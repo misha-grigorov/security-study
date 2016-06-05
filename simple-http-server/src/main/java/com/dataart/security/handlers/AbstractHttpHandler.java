@@ -60,6 +60,11 @@ public abstract class AbstractHttpHandler implements HttpHandler {
     protected void redirect(String location, String sessionId, HttpExchange httpExchange) throws IOException {
         httpExchange.getResponseHeaders().set("Set-Cookie", SERVER_SESSION_KEY + sessionId +
                 "; path=/; domain=127.0.0.1; httponly");
+
+        redirect(location, httpExchange);
+    }
+
+    protected void redirect(String location, HttpExchange httpExchange) throws IOException {
         httpExchange.getResponseHeaders().set("Location", location);
         httpExchange.sendResponseHeaders(HTTP_MOVED_TEMP, -1);
 

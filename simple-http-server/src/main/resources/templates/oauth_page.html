@@ -1,0 +1,20 @@
+@args String error, String authUrl, Collection<String> labels
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gmail Client</title>
+</head>
+<body>
+@if (labels != null && !labels.isEmpty()) {
+    <h4>labels: </h4>
+    @for (String label : labels) {
+        @label
+        <br/>
+    }
+} else if (error == null || error.isEmpty()) {
+    <input type="submit" value="Gmail" onclick="location.href='@authUrl'"/>
+} else {
+   <h4>There was an error, @error</h4>
+}
+</body>
+</html>

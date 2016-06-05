@@ -64,6 +64,10 @@ public class Utils {
     public static Map<String, String> parseQuery(String source) {
         Map<String, String> result = new HashMap<>();
 
+        if (source == null) {
+            return result;
+        }
+
         String[] pairs = source.split("&");
 
         for (String pair : pairs) {

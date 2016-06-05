@@ -10,6 +10,8 @@ import com.dataart.security.handlers.FormHandler;
 import com.dataart.security.handlers.JsonHandler;
 import com.dataart.security.handlers.LoginPageHandler;
 import com.dataart.security.handlers.LogoutHandler;
+import com.dataart.security.handlers.OAuthCallbackHandler;
+import com.dataart.security.handlers.OAuthPageHandler;
 import com.dataart.security.handlers.RecoverPageHandler;
 import com.dataart.security.handlers.RegisterPageHandler;
 import com.dataart.security.handlers.RegistrationHandler;
@@ -85,5 +87,8 @@ public class SimpleHttpServer {
         server.createContext("/json", new JsonHandler()).setAuthenticator(basicAuthenticator);
         server.createContext("/form", new FormHandler()).setAuthenticator(basicAuthenticator);
         server.createContext("/upload", new FileUploadHandler()).setAuthenticator(basicAuthenticator);
+
+        server.createContext("/oauth-page", new OAuthPageHandler());
+        server.createContext("/oauth2callback", new OAuthCallbackHandler());
     }
 }
