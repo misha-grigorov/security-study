@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Oauth Client</title>
+</head>
+<body>
+<h3>Create OAuth client</h3>
+<form method="post" action="/change-password">
+    Application type: <label>
+    <input type="password" name="new-password" size="64"/>
+</label><br/>
+    Name: <label>
+    <input type="password" name="repeat-new-password" size="64"/>
+</label><br/>
+    Authorized redirect URIs: <label>
+    <input type="password" name="repeat-new-password" size="64"/>
+    </label>
+    <br/>
+    <input type="submit" value="SEND"/>
+    <input type="hidden" name="action" value="reset"/>
+    <input type="hidden" name="tokenId" value="@tokenId"/>
+</form>
+</body>
+</html>

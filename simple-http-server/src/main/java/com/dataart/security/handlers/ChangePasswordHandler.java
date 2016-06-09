@@ -50,11 +50,22 @@ public class ChangePasswordHandler extends AbstractHttpHandler {
             return;
         }
 
-        // we already read everything in authenticator
-        closeRequestBodyStream(httpExchange.getRequestBody());
-
         @SuppressWarnings("unchecked")
         Map<String, String> params = (Map<String, String>) httpExchange.getAttribute("change-password-params");
+
+        if (params == null) {
+            params = Utils.parseQuery(Utils.readRequestBody(httpExchange.getRequestBody(), false));
+        } else {
+            httpExchange.setAttribute("change-password-params", null);
+        }
+
+        if (params == null) {
+            badRequest(HTTP_BAD_REQUEST, httpExchange);
+
+            return;
+        }
+
+        closeRequestBodyStream(httpExchange.getRequestBody());
 
         String action = params.get("action");
 

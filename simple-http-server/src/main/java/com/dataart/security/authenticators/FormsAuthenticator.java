@@ -12,7 +12,11 @@ import com.sun.net.httpserver.Authenticator;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpPrincipal;
+import org.pmw.tinylog.Logger;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import static com.dataart.security.utils.Utils.CONTENT_TYPE;
@@ -40,8 +44,9 @@ public class FormsAuthenticator extends Authenticator {
             return successAuth(responseHeaders, session.getToken(), session.getUser().getLogin());
         }
 
+        String path = httpExchange.getRequestURI().getPath();
+
         if (requestMethod.equals("POST")) {
-            String path = httpExchange.getRequestURI().getPath();
 
             if (path.equals("/auth")) {
                 return tryToAuthenticate(httpExchange);
@@ -50,7 +55,7 @@ public class FormsAuthenticator extends Authenticator {
             }
         }
 
-        return redirectToLoginPage(responseHeaders);
+        return redirectToLoginPage(responseHeaders, path, httpExchange.getRequestURI().getQuery());
     }
 
     private Result checkRegistrationToken(HttpExchange httpExchange) {
@@ -111,6 +116,8 @@ public class FormsAuthenticator extends Authenticator {
             SESSION_MANAGER.newSession(newSession);
             AUTH_METRIC_MANAGER.loginSuccess(user);
 
+            httpExchange.setAttribute("auth-params", params);
+
             return successAuth(responseHeaders, newSession.getToken(), login);
         } else {
             UserStatus userStatus = AUTH_METRIC_MANAGER.loginFail(user);
@@ -136,8 +143,22 @@ public class FormsAuthenticator extends Authenticator {
         return new Success(new HttpPrincipal(userLogin, REALM));
     }
 
-    private Result redirectToLoginPage(Headers responseHeaders) {
-        responseHeaders.set("Location", "/login-page");
+    private Result redirectToLoginPage(Headers responseHeaders, String path, String query) {
+        String redirectLocation = "/login-page";
+
+        if (query != null) {
+            String encodedContinuePath = null;
+
+            try {
+                encodedContinuePath = URLEncoder.encode(path + "?" + query, StandardCharsets.UTF_8.name());
+            } catch (UnsupportedEncodingException e) {
+                Logger.info("Failed to url-encode redirect url", e.getMessage());
+            }
+
+            redirectLocation = encodedContinuePath != null ? redirectLocation + "?continue=" + encodedContinuePath : redirectLocation;
+        }
+
+        responseHeaders.set("Location", redirectLocation);
 
         return new Retry(HTTP_MOVED_TEMP);
     }

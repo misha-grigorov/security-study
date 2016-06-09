@@ -1,6 +1,8 @@
 package com.dataart.security;
 
 import com.dataart.security.authenticators.FormsAuthenticator;
+import com.dataart.security.authenticators.OAuthAccessTokenAuthenticator;
+import com.dataart.security.authenticators.OAuthAuthenticator;
 import com.dataart.security.authenticators.SimpleBasicAuthenticator;
 import com.dataart.security.handlers.AuthHandler;
 import com.dataart.security.handlers.ChangePasswordHandler;
@@ -18,6 +20,11 @@ import com.dataart.security.handlers.RegistrationHandler;
 import com.dataart.security.handlers.RootHandler;
 import com.dataart.security.handlers.SimpleResourceHandler;
 import com.dataart.security.handlers.SimpleResourcePageHandler;
+import com.dataart.security.handlers.oauth.OAuthAuthorizationHandler;
+import com.dataart.security.handlers.oauth.OAuthClientPageHandler;
+import com.dataart.security.handlers.oauth.OAuthRedirectHandler;
+import com.dataart.security.handlers.oauth.OAuthAccessTokenHandler;
+import com.dataart.security.handlers.oauth.OAuthSimpleResourceHandler;
 import com.sun.net.httpserver.Authenticator;
 import com.sun.net.httpserver.HttpServer;
 import org.pmw.tinylog.Logger;
@@ -64,6 +71,8 @@ public class SimpleHttpServer {
     protected void initContext() {
         Authenticator basicAuthenticator = new SimpleBasicAuthenticator("Some Realm");
         Authenticator formsAuthenticator = new FormsAuthenticator();
+        Authenticator oauthAuthenticator = new OAuthAuthenticator("OAuth Bearer");
+        Authenticator oAuthAccessTokenAuthenticator = new OAuthAccessTokenAuthenticator("OAuth Basic");
 
         server.createContext("/", new RootHandler()).setAuthenticator(formsAuthenticator);
         server.createContext("/favicon.ico", httpExchange -> {
@@ -80,6 +89,12 @@ public class SimpleHttpServer {
         server.createContext("/login-page", new LoginPageHandler());
         server.createContext("/register-page", new RegisterPageHandler());
         server.createContext("/recovery-page", new RecoverPageHandler());
+
+        server.createContext("/oauth/client", new OAuthClientPageHandler()).setAuthenticator(formsAuthenticator);
+        server.createContext("/oauth/token", new OAuthAccessTokenHandler()).setAuthenticator(oAuthAccessTokenAuthenticator);
+        server.createContext("/oauth/auth", new OAuthAuthorizationHandler()).setAuthenticator(formsAuthenticator);
+        server.createContext("/oauth/redirect", new OAuthRedirectHandler()).setAuthenticator(formsAuthenticator);
+        server.createContext("/oauth/resource", new OAuthSimpleResourceHandler()).setAuthenticator(oauthAuthenticator);
 
         server.createContext("/simple-resource-page", new SimpleResourcePageHandler()).setAuthenticator(formsAuthenticator);
         server.createContext("/simple-resource", new SimpleResourceHandler()).setAuthenticator(formsAuthenticator);

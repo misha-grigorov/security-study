@@ -21,6 +21,7 @@
         <commons-validator.version>1.5.1</commons-validator.version>
         <rythm-engine.version>1.1.5</rythm-engine.version>
         <fluent-hc.version>4.5.2</fluent-hc.version>
+        <jjwt.version>0.6.0</jjwt.version>
     </properties>
 
     <dependencies>
@@ -48,6 +49,11 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>fluent-hc</artifactId>
             <version>${fluent-hc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>${jjwt.version}</version>
         </dependency>
     </dependencies>
 

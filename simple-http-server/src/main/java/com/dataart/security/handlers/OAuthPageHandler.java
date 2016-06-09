@@ -1,19 +1,15 @@
 package com.dataart.security.handlers;
 
-import com.dataart.security.utils.GmailLabelInfo;
 import com.dataart.security.utils.GoogleOAuthUtils;
 import com.dataart.security.utils.Utils;
-import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import org.pmw.tinylog.Logger;
 import org.rythmengine.Rythm;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;

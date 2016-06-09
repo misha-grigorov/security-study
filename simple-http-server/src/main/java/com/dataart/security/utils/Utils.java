@@ -1,6 +1,12 @@
 package com.dataart.security.utils;
 
+import com.dataart.security.oauth.MySigningKeyResolverAdapter;
+import com.dataart.security.permissions.SimpleResourcePermission;
 import com.dataart.security.users.User;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureException;
 import org.pmw.tinylog.Logger;
 
 import javax.crypto.SecretKey;
@@ -15,7 +21,10 @@ import java.net.URLDecoder;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -28,6 +37,8 @@ public class Utils {
     public static final String FORMS_URL_ENCODED = "application/x-www-form-urlencoded";
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String TEXT_HTML_CHARSET_UTF_8 = "text/html; charset=utf-8";
+    public static final String TEXT_PLAIN = "text/plain; charset=utf-8";
+    public static final String APPLICATION_JSON = "application/json; charset=utf-8";
 
     private Utils() {
     }
@@ -125,5 +136,41 @@ public class Utils {
         String newHashedPassword = hashPassword(password.toCharArray(), user.getSalt().getBytes(UTF_8));
 
         return user.getPassword().equals(newHashedPassword);
+    }
+
+    public static Jws<Claims> parseJwtToken(String bearerToken) {
+        Jws<Claims> claimsJws = null;
+
+        try {
+            claimsJws = Jwts.parser().setSigningKeyResolver(new MySigningKeyResolverAdapter()).parseClaimsJws(bearerToken);
+        } catch (SignatureException e) {
+            Logger.info(e.getMessage());
+        }
+
+        return claimsJws;
+    }
+
+    public static List<SimpleResourcePermission> parseScope(String scope) {
+        List<String> scopes = new ArrayList<>();
+
+        if (scope.contains(" ")) {
+            Collections.addAll(scopes, scope.split(" "));
+        } else {
+            scopes.add(scope);
+        }
+
+        List<SimpleResourcePermission> scopePermissions = new ArrayList<>();
+
+        for (String scopeValue : scopes) {
+            try {
+                SimpleResourcePermission resourcePermission = SimpleResourcePermission.valueOf(scopeValue.toUpperCase());
+
+                scopePermissions.add(resourcePermission);
+            } catch (IllegalArgumentException e) {
+                Logger.info("Invalid scope requested", e.getMessage());
+            }
+        }
+
+        return scopePermissions;
     }
 }

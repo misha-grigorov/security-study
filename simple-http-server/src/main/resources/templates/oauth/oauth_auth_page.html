@@ -1,0 +1,31 @@
+@import com.dataart.security.oauth.OAuthClientInfo
+@import com.dataart.security.permissions.SimpleResourcePermission
+@args OAuthClientInfo clientInfo, List<SimpleResourcePermission> permissions, String state
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OAuth Authentication Endpoint</title>
+</head>
+<body>
+<h3>Application @clientInfo.getName() [@clientInfo.getApplicationType()] would like to perform these actions with your SimpleResource:</h3>
+<ul>
+    @for (SimpleResourcePermission permission : permissions) {
+        <li>@permission.name()</li>
+    }
+</ul>
+<form method="post" action="/oauth/redirect">
+    <input type="submit" name="action" value="Allow"/>
+    <input type="submit" name="action" value="Deny"/>
+    <input type="hidden" name="state" value="@state"/>
+</form>
+<div>
+Developer info
+    <br/>
+email: @clientInfo.getDeveloperEmail()
+    <br/>
+Clicking "Allow" will redirect you to:
+    <br/>
+@clientInfo.getRedirectUri()
+</div>
+</body>
+</html>

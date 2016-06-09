@@ -1,5 +1,7 @@
 package com.dataart.security.db;
 
+import com.dataart.security.oauth.OAuthApplicationType;
+import com.dataart.security.oauth.OAuthClientInfo;
 import com.dataart.security.users.User;
 import com.dataart.security.users.UserGroup;
 import com.dataart.security.users.UserStatus;
@@ -9,6 +11,7 @@ import java.util.Map;
 
 public class InMemoryUserDataBase {
     private static final Map<String, User> USERS = new HashMap<>();
+    private static final Map<String, OAuthClientInfo> OAUTH_CLIENTS = new HashMap<>();
 
     static {
         User admin = new User("admin-ubmzc", "admin@gmail.com", "$3cur!tY-SSZ2Q");
@@ -17,6 +20,17 @@ public class InMemoryUserDataBase {
         admin.setUserGroup(UserGroup.ADMIN);
 
         USERS.put(admin.getLogin(), admin);
+
+        OAuthClientInfo clientInfo = new OAuthClientInfo();
+
+        clientInfo.setId("unique-id");
+        clientInfo.setName("Simple OAuth Client");
+        clientInfo.setRedirectUri("https://www.getpostman.com/oauth2/callback");
+        clientInfo.setDeveloperEmail("Mikhail.Grigorov@dataart.com");
+        clientInfo.setSecret("dhst8jrm1if1l4jlu2ip0afcfri0jto8usqd0asf4rd22a3s0h7");
+        clientInfo.setApplicationType(OAuthApplicationType.WEB_APPLICATION);
+
+        OAUTH_CLIENTS.put(clientInfo.getId(), clientInfo);
     }
 
     private static class InMemoryUserDataBaseHolder {
@@ -55,5 +69,9 @@ public class InMemoryUserDataBase {
         }
 
         USERS.put(newUser.getLogin(), newUser);
+    }
+
+    public synchronized OAuthClientInfo getClientInfoById(String clientId) {
+        return OAUTH_CLIENTS.get(clientId);
     }
 }

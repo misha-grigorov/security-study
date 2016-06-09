@@ -7,12 +7,9 @@ import com.sun.net.httpserver.HttpExchange;
 import org.pmw.tinylog.Logger;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class OAuthCallbackHandler extends AbstractHttpHandler {
     public static final List<String> ALLOWED_METHODS = Arrays.asList("GET");

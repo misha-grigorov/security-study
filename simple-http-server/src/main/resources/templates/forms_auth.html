@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+@args String continueRedirectValue
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -14,6 +14,9 @@
     <input type="password" name="pw" size="32"/>
 </label><br/><br/>
     <input type="submit" value="SEND"/>
+    @if (continueRedirectValue != null && !continueRedirectValue.isEmpty()) {
+        <input type="hidden" name="continue" value="@continueRedirectValue"/>
+    }
 </form>
 <br/>
 <a href="/register-page" title="Register">Register</a>
