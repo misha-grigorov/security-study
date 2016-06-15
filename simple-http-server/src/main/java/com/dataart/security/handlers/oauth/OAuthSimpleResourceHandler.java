@@ -59,7 +59,7 @@ public class OAuthSimpleResourceHandler extends AbstractBaseOAuthHandler {
 
         List<SimpleResourcePermission> requestScopeList = Utils.parseScope(scope);
 
-        if (!requestScopeList.contains(REQUIRED_PERMISSION) && !AUTHORIZATION_MANAGER.isPermitted(user, REQUIRED_PERMISSION)) {
+        if (!requestScopeList.contains(REQUIRED_PERMISSION) || !AUTHORIZATION_MANAGER.isPermitted(user, REQUIRED_PERMISSION)) {
             Logger.info("Invalid scope was requested");
 
             errorResponse(httpExchange, OAuthErrorType.INVALID_SCOPE);

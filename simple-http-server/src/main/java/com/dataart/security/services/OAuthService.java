@@ -11,6 +11,7 @@ import com.dataart.security.permissions.SimpleResourcePermission;
 import com.dataart.security.users.User;
 import com.dataart.security.users.UserStatus;
 import com.dataart.security.utils.Utils;
+import com.sun.net.httpserver.HttpPrincipal;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -173,7 +174,7 @@ public class OAuthService {
         return result;
     }
 
-    public synchronized OAuthJwtAccessToken newAccessTokenRequest(Map<String, String> queryMap) {
+    public synchronized OAuthJwtAccessToken newAccessTokenRequest(Map<String, String> queryMap, HttpPrincipal principal) {
         OAuthJwtAccessToken accessToken = new OAuthJwtAccessToken();
 
         String code = queryMap.get("code");
@@ -181,7 +182,8 @@ public class OAuthService {
         String redirectUrl = queryMap.get("redirect_uri");
         String clientId = queryMap.get("client_id");
 
-        if (grantType == null || clientId == null || redirectUrl == null || code == null) {
+        if (grantType == null || clientId == null || redirectUrl == null || code == null || principal == null ||
+                !principal.getName().equals(clientId)) {
             accessToken.setErrorType(OAuthErrorType.INVALID_REQUEST);
 
             return accessToken;

@@ -146,7 +146,7 @@ public class FormsAuthenticator extends Authenticator {
     private Result redirectToLoginPage(Headers responseHeaders, String path, String query) {
         String redirectLocation = "/login-page";
 
-        if (query != null) {
+        if (query != null && !query.toLowerCase().startsWith("http")) {
             String encodedContinuePath = null;
 
             try {

@@ -36,7 +36,7 @@ public class OAuthAccessTokenHandler extends AbstractBaseOAuthHandler {
         String request = Utils.readRequestBody(httpExchange.getRequestBody());
         Map<String, String> params = Utils.parseQuery(request);
 
-        OAuthJwtAccessToken accessToken = OAUTH_SERVICE.newAccessTokenRequest(params);
+        OAuthJwtAccessToken accessToken = OAUTH_SERVICE.newAccessTokenRequest(params, httpExchange.getPrincipal());
 
         if (accessToken.getErrorType() != OAuthErrorType.NONE) {
             errorResponse(httpExchange, accessToken.getErrorType());
