@@ -11,7 +11,6 @@ import java.util.List;
 
 import static com.dataart.security.utils.Utils.CONTENT_TYPE;
 import static com.dataart.security.utils.Utils.FORMS_URL_ENCODED;
-import static com.dataart.security.utils.Utils.readRequestBody;
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 import static java.net.HttpURLConnection.HTTP_OK;
 
@@ -33,7 +32,7 @@ public class FormHandler extends AbstractHttpHandler {
 
         InputStream requestBody = httpExchange.getRequestBody();
         OutputStream responseBody = httpExchange.getResponseBody();
-        String request = Utils.parseQuery(readRequestBody(requestBody)).toString();
+        String request = Utils.parseQuery(Utils.readFromRequestBody(requestBody)).toString();
 
         httpExchange.getResponseHeaders().add(CONTENT_TYPE, "text/plain; charset=utf-8");
         httpExchange.sendResponseHeaders(HTTP_OK, request.length());

@@ -1,0 +1,20 @@
+@args String imageUrl
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+</head>
+<body>
+<h2>Profile image</h2>
+
+@if (imageUrl == null || imageUrl.isEmpty()) {
+    <form method="post" enctype="multipart/form-data" action="/upload/image">
+        Choose the image to upload:
+        <input type="file" required="required" accept="image/jpeg" name="fileID" /><br />
+        <input type="submit" value="Upload"/>
+    </form>
+} else {
+    <img src="@imageUrl" name="Profile image"/>
+}
+</body>
+</html>

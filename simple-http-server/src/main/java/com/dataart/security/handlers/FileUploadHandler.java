@@ -1,5 +1,6 @@
 package com.dataart.security.handlers;
 
+import com.dataart.security.utils.Utils;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
@@ -9,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.dataart.security.utils.Utils.CONTENT_TYPE;
-import static com.dataart.security.utils.Utils.readRequestBody;
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 import static java.net.HttpURLConnection.HTTP_OK;
 
@@ -36,7 +36,7 @@ public class FileUploadHandler extends AbstractHttpHandler {
         String contentDelimiter = contentType.substring(contentType.indexOf(BOUNDARY_KEY) + BOUNDARY_KEY.length());
         InputStream requestBody = httpExchange.getRequestBody();
         OutputStream responseBody = httpExchange.getResponseBody();
-        String fileContent = readRequestBody(requestBody);
+        String fileContent = Utils.readFromRequestBody(requestBody);
 
         String fileName = getFileName(fileContent);
 

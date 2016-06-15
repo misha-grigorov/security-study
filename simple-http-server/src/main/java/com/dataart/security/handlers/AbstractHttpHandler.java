@@ -45,10 +45,24 @@ public abstract class AbstractHttpHandler implements HttpHandler {
         responseBody.close();
     }
 
-    protected void badRequest(int responseStatus, HttpExchange httpExchange) throws IOException {
-        httpExchange.sendResponseHeaders(responseStatus, -1);
+    protected void badRequest(int responseStatus, HttpExchange httpExchange, String response) throws IOException {
+        int responseLength = response == null ? -1 : response.length();
+
+        OutputStream responseBody = httpExchange.getResponseBody();
+
+        if (responseLength != -1) {
+            httpExchange.getResponseHeaders().add("Content-Type", "text/plain; charset=utf-8");
+
+            responseBody.write(response.getBytes(UTF_8));
+        }
+
+        httpExchange.sendResponseHeaders(responseStatus, responseLength);
         closeRequestBodyStream(httpExchange.getRequestBody());
-        closeResponseBodyStream(httpExchange.getResponseBody());
+        closeResponseBodyStream(responseBody);
+    }
+
+    protected void badRequest(int responseStatus, HttpExchange httpExchange) throws IOException {
+        badRequest(responseStatus, httpExchange, null);
     }
 
     protected void sendResponse(String response, OutputStream responseBody) throws IOException {

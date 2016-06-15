@@ -15,9 +15,9 @@ public class ChangePasswordPageHandler extends SingleHtmlPageHandler {
     private static final String RESET_PASSWORD_RESPONSE;
 
     static {
-        CHANGE_PASSWORD_RESPONSE = Utils.readRequestBody(ChangePasswordPageHandler.class.getClassLoader().getResourceAsStream("change_password.html"));
+        CHANGE_PASSWORD_RESPONSE = Utils.readFromRequestBody(ChangePasswordPageHandler.class.getClassLoader().getResourceAsStream("change_password.html"));
 
-        RESET_PASSWORD_RESPONSE = Utils.readRequestBody(ChangePasswordPageHandler.class.getClassLoader().getResourceAsStream("reset_password.html"));
+        RESET_PASSWORD_RESPONSE = Utils.readFromRequestBody(ChangePasswordPageHandler.class.getClassLoader().getResourceAsStream("reset_password.html"));
     }
 
     @Override

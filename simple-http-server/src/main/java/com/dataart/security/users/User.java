@@ -2,6 +2,7 @@ package com.dataart.security.users;
 
 import com.dataart.security.utils.Utils;
 
+import java.nio.file.Path;
 import java.util.Objects;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -11,6 +12,7 @@ public class User {
     private String email;
     private String password;
     private String salt;
+    private Path profileImage;
     private UserStatus status;
     private UserGroup userGroup;
 
@@ -70,6 +72,14 @@ public class User {
 
     public void setUserGroup(UserGroup userGroup) {
         this.userGroup = userGroup;
+    }
+
+    public Path getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(Path profileImage) {
+        this.profileImage = profileImage;
     }
 
     @Override

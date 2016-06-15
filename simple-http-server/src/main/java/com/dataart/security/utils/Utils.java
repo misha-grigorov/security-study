@@ -12,9 +12,11 @@ import org.pmw.tinylog.Logger;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.URLDecoder;
@@ -43,11 +45,11 @@ public class Utils {
     private Utils() {
     }
 
-    public static String readRequestBody(InputStream requestBody) {
-        return readRequestBody(requestBody, true);
+    public static String readFromRequestBody(InputStream requestBody) {
+        return readFromRequestBody(requestBody, true);
     }
 
-    public static String readRequestBody(InputStream requestBody, boolean closeStream) {
+    public static String readFromRequestBody(InputStream requestBody, boolean closeStream) {
         StringBuilder stringBuilder = new StringBuilder();
 
         try {
@@ -70,6 +72,37 @@ public class Utils {
         }
 
         return stringBuilder.toString();
+    }
+
+    public static byte[] readBytesFromRequestBody(InputStream requestBody, boolean closeStream) {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+        int nRead;
+        byte[] data = new byte[16384];
+
+        try {
+            while ((nRead = requestBody.read(data, 0, data.length)) != -1) {
+                buffer.write(data, 0, nRead);
+            }
+        } catch (IOException e) {
+            Logger.warn(e.getMessage());
+        }
+
+        try {
+            buffer.flush();
+        } catch (IOException e) {
+            Logger.warn(e.getMessage());
+        }
+
+        if (closeStream) {
+            try {
+                requestBody.close();
+            } catch (IOException e) {
+                Logger.warn(e.getMessage());
+            }
+        }
+
+        return buffer.toByteArray();
     }
 
     public static Map<String, String> parseQuery(String source) {

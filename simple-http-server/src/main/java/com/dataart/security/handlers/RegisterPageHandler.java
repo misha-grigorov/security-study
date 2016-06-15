@@ -11,7 +11,7 @@ public class RegisterPageHandler extends SingleHtmlPageHandler {
     static {
         InputStream resourceAsStream = LoginPageHandler.class.getClassLoader().getResourceAsStream("register.html");
 
-        HTML_RESPONSE = Utils.readRequestBody(resourceAsStream);
+        HTML_RESPONSE = Utils.readFromRequestBody(resourceAsStream);
     }
 
     @Override

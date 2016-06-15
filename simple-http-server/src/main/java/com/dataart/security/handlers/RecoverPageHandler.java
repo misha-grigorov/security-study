@@ -12,7 +12,7 @@ public class RecoverPageHandler extends SingleHtmlPageHandler {
     static {
         InputStream resourceAsStream = RecoverPageHandler.class.getClassLoader().getResourceAsStream("recovery_page.html");
 
-        HTML_RESPONSE = Utils.readRequestBody(resourceAsStream);
+        HTML_RESPONSE = Utils.readFromRequestBody(resourceAsStream);
     }
 
     @Override

@@ -92,7 +92,7 @@ public class RegistrationHandler extends AbstractHttpHandler {
             return;
         }
 
-        String request = Utils.readRequestBody(httpExchange.getRequestBody());
+        String request = Utils.readFromRequestBody(httpExchange.getRequestBody());
         Map<String, String> params = Utils.parseQuery(request);
         String email = params.get("email");
         String action = params.get("action");

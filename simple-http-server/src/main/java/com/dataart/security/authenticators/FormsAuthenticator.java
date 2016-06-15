@@ -65,7 +65,7 @@ public class FormsAuthenticator extends Authenticator {
             return new Failure(HTTP_BAD_REQUEST);
         }
 
-        String request = Utils.readRequestBody(httpExchange.getRequestBody(), false);
+        String request = Utils.readFromRequestBody(httpExchange.getRequestBody(), false);
         Map<String, String> params = Utils.parseQuery(request);
         String tokenId = params.get("tokenId");
         User user = RegistrationService.checkRegistrationToken(tokenId, true);
@@ -93,7 +93,7 @@ public class FormsAuthenticator extends Authenticator {
         }
 
         // do not close requestBody stream
-        String request = Utils.readRequestBody(httpExchange.getRequestBody(), false);
+        String request = Utils.readFromRequestBody(httpExchange.getRequestBody(), false);
         Map<String, String> params = Utils.parseQuery(request);
         String login = params.get("user");
         String password = params.get("pw");

@@ -32,7 +32,7 @@ public class OAuthRedirectHandler extends AbstractBaseOAuthHandler {
             return;
         }
 
-        String request = Utils.readRequestBody(httpExchange.getRequestBody());
+        String request = Utils.readFromRequestBody(httpExchange.getRequestBody());
         Map<String, String> params = Utils.parseQuery(request);
         String action = params.get("action");
 

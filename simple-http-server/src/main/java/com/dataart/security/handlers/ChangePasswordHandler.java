@@ -54,7 +54,7 @@ public class ChangePasswordHandler extends AbstractHttpHandler {
         Map<String, String> params = (Map<String, String>) httpExchange.getAttribute("change-password-params");
 
         if (params == null) {
-            params = Utils.parseQuery(Utils.readRequestBody(httpExchange.getRequestBody(), false));
+            params = Utils.parseQuery(Utils.readFromRequestBody(httpExchange.getRequestBody(), false));
         } else {
             httpExchange.setAttribute("change-password-params", null);
         }

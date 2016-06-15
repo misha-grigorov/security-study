@@ -1,5 +1,6 @@
 package com.dataart.security.handlers;
 
+import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import org.pmw.tinylog.Logger;
 
@@ -38,7 +39,11 @@ public abstract class SingleHtmlPageHandler extends AbstractHttpHandler {
             return;
         }
 
-        httpExchange.getResponseHeaders().add(CONTENT_TYPE, TEXT_HTML_CHARSET_UTF_8);
+        Headers responseHeaders = httpExchange.getResponseHeaders();
+
+        responseHeaders.add("Cache-Control", "no-store");
+        responseHeaders.add("Pragma", "no-cache");
+        responseHeaders.add(CONTENT_TYPE, TEXT_HTML_CHARSET_UTF_8);
         httpExchange.sendResponseHeaders(HTTP_OK, response.length());
 
         closeRequestBodyStream(requestBody);

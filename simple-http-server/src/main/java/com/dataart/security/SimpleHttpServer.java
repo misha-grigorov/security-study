@@ -9,11 +9,14 @@ import com.dataart.security.handlers.ChangePasswordHandler;
 import com.dataart.security.handlers.ChangePasswordPageHandler;
 import com.dataart.security.handlers.FileUploadHandler;
 import com.dataart.security.handlers.FormHandler;
+import com.dataart.security.handlers.ImageUploadHandler;
+import com.dataart.security.handlers.ImagesHandler;
 import com.dataart.security.handlers.JsonHandler;
 import com.dataart.security.handlers.LoginPageHandler;
 import com.dataart.security.handlers.LogoutHandler;
 import com.dataart.security.handlers.OAuthCallbackHandler;
 import com.dataart.security.handlers.OAuthPageHandler;
+import com.dataart.security.handlers.ProfilePageHandler;
 import com.dataart.security.handlers.RecoverPageHandler;
 import com.dataart.security.handlers.RegisterPageHandler;
 import com.dataart.security.handlers.RegistrationHandler;
@@ -98,6 +101,10 @@ public class SimpleHttpServer {
 
         server.createContext("/simple-resource-page", new SimpleResourcePageHandler()).setAuthenticator(formsAuthenticator);
         server.createContext("/simple-resource", new SimpleResourceHandler()).setAuthenticator(formsAuthenticator);
+
+        server.createContext("/upload/image", new ImageUploadHandler()).setAuthenticator(formsAuthenticator);
+        server.createContext("/profile-page", new ProfilePageHandler()).setAuthenticator(formsAuthenticator);
+        server.createContext("/images", new ImagesHandler()).setAuthenticator(formsAuthenticator);
 
         server.createContext("/json", new JsonHandler()).setAuthenticator(basicAuthenticator);
         server.createContext("/form", new FormHandler()).setAuthenticator(basicAuthenticator);
