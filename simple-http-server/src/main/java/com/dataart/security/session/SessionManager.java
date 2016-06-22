@@ -163,4 +163,18 @@ public class SessionManager {
 
         return sessionToken.substring(startIndex, endIndex);
     }
+
+    public synchronized boolean checkCsrf(String csrf, HttpExchange httpExchange) {
+        if (csrf == null || httpExchange == null) {
+            return false;
+        }
+
+        Session session = getSessionIfAuthenticated(httpExchange);
+
+        if (session == null || session.getCsrf() == null || !csrf.equals(session.getCsrf())) {
+            return false;
+        }
+
+        return true;
+    }
 }

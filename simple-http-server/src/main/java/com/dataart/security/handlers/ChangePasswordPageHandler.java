@@ -1,22 +1,23 @@
 package com.dataart.security.handlers;
 
 import com.dataart.security.db.InMemoryUserDataBase;
+import com.dataart.security.session.SessionManager;
 import com.dataart.security.users.User;
 import com.dataart.security.users.UserStatus;
 import com.dataart.security.utils.Utils;
 import com.sun.net.httpserver.HttpExchange;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.pmw.tinylog.Logger;
+import org.rythmengine.Rythm;
 
 import java.io.IOException;
 
 public class ChangePasswordPageHandler extends SingleHtmlPageHandler {
     private static final InMemoryUserDataBase DATA_BASE = InMemoryUserDataBase.getInstance();
-    private static final String CHANGE_PASSWORD_RESPONSE;
+    private static final SessionManager SESSION_MANAGER = SessionManager.getInstance();
     private static final String RESET_PASSWORD_RESPONSE;
 
     static {
-        CHANGE_PASSWORD_RESPONSE = Utils.readFromRequestBody(ChangePasswordPageHandler.class.getClassLoader().getResourceAsStream("change_password.html"));
-
         RESET_PASSWORD_RESPONSE = Utils.readFromRequestBody(ChangePasswordPageHandler.class.getClassLoader().getResourceAsStream("reset_password.html"));
     }
 
@@ -35,6 +36,8 @@ public class ChangePasswordPageHandler extends SingleHtmlPageHandler {
             return RESET_PASSWORD_RESPONSE;
         }
 
-        return CHANGE_PASSWORD_RESPONSE;
+        String csrf = SESSION_MANAGER.getSessionIfAuthenticated(httpExchange).getCsrf();
+
+        return Rythm.render("change_password.html", StringEscapeUtils.escapeHtml4(csrf));
     }
 }

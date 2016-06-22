@@ -8,6 +8,7 @@ public class Session {
     private String userAgent;
     private String ipAddress;
     private String token;
+    private String csrf;
     private long lastSeen;
 
     private Session() {
@@ -18,7 +19,9 @@ public class Session {
         this.userAgent = userAgent;
         this.ipAddress = ipAddress;
         this.lastSeen = System.currentTimeMillis();
-        this.token = updateToken();
+        this.csrf = Utils.generateSecureRandom();
+
+        updateToken();
     }
 
     public User getUser() {
@@ -59,6 +62,14 @@ public class Session {
 
     public void setLastSeen(long lastSeen) {
         this.lastSeen = lastSeen;
+    }
+
+    public String getCsrf() {
+        return csrf;
+    }
+
+    public void setCsrf(String csrf) {
+        this.csrf = csrf;
     }
 
     public String updateToken() {

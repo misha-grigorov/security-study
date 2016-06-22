@@ -8,6 +8,7 @@ import com.dataart.security.users.User;
 import com.dataart.security.users.UserStatus;
 import com.dataart.security.utils.Utils;
 import com.sun.net.httpserver.HttpExchange;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.pmw.tinylog.Logger;
 
 import java.io.IOException;
@@ -89,6 +90,16 @@ public class ChangePasswordHandler extends AbstractHttpHandler {
     }
 
     private void handleChange(User user, Map<String, String> params, HttpExchange httpExchange) throws IOException {
+        if (!SESSION_MANAGER.checkCsrf(StringEscapeUtils.unescapeHtml4(params.get("csrfToken")), httpExchange)) {
+            Logger.info("Invalid csrf token, possible break in attempt. Clearing all user sessions");
+
+            SESSION_MANAGER.clearUserSessions(user);
+
+            badRequest(HTTP_BAD_REQUEST, httpExchange);
+
+            return;
+        }
+
         doHandle(user, params, httpExchange, true);
     }
 

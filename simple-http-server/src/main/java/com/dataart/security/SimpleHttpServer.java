@@ -7,6 +7,7 @@ import com.dataart.security.authenticators.SimpleBasicAuthenticator;
 import com.dataart.security.handlers.AuthHandler;
 import com.dataart.security.handlers.ChangePasswordHandler;
 import com.dataart.security.handlers.ChangePasswordPageHandler;
+import com.dataart.security.handlers.CorsApiHandler;
 import com.dataart.security.handlers.FileUploadHandler;
 import com.dataart.security.handlers.FormHandler;
 import com.dataart.security.handlers.ImageUploadHandler;
@@ -109,6 +110,8 @@ public class SimpleHttpServer {
         server.createContext("/json", new JsonHandler()).setAuthenticator(basicAuthenticator);
         server.createContext("/form", new FormHandler()).setAuthenticator(basicAuthenticator);
         server.createContext("/upload", new FileUploadHandler()).setAuthenticator(basicAuthenticator);
+
+        server.createContext("/cors-api", new CorsApiHandler());
 
         server.createContext("/oauth-page", new OAuthPageHandler());
         server.createContext("/oauth2callback", new OAuthCallbackHandler());
