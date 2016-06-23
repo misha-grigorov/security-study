@@ -47,8 +47,6 @@ public class OAuthAccessTokenHandler extends AbstractBaseOAuthHandler {
         Headers responseHeaders = httpExchange.getResponseHeaders();
 
         responseHeaders.add(CONTENT_TYPE, Utils.APPLICATION_JSON);
-        responseHeaders.add("Pragma", "no-cache");
-        responseHeaders.add("Cache-Control", "no-store");
 
         String response = accessToken.toJsonString();
 

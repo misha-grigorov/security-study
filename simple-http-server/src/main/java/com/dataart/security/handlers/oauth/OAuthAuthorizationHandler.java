@@ -57,8 +57,6 @@ public class OAuthAuthorizationHandler extends AbstractBaseOAuthHandler {
 
         Headers responseHeaders = httpExchange.getResponseHeaders();
 
-        responseHeaders.add("Pragma", "no-cache");
-        responseHeaders.add("Cache-Control", "no-store");
         responseHeaders.add(CONTENT_TYPE, TEXT_HTML_CHARSET_UTF_8);
         httpExchange.sendResponseHeaders(HTTP_OK, response.length());
 

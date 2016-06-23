@@ -41,8 +41,6 @@ public abstract class SingleHtmlPageHandler extends AbstractHttpHandler {
 
         Headers responseHeaders = httpExchange.getResponseHeaders();
 
-        responseHeaders.add("Cache-Control", "no-store");
-        responseHeaders.add("Pragma", "no-cache");
         responseHeaders.add(CONTENT_TYPE, TEXT_HTML_CHARSET_UTF_8);
         httpExchange.sendResponseHeaders(HTTP_OK, response.length());
 

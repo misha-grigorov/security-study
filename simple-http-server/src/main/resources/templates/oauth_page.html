@@ -12,7 +12,7 @@
         <br/>
     }
 } else if (error == null || error.isEmpty()) {
-    <input type="submit" value="Gmail" onclick="location.href='@authUrl'"/>
+    <input type="submit" value="Gmail" onclick="location.href='@authUrl'" autocomplete="off"/>
 } else {
    <h4>There was an error, @error</h4>
 }

@@ -6,19 +6,19 @@
 </head>
 <body>
 @if (canRead) {
-    <input type="submit" value="read"/>
+    <input type="submit" value="read" autocomplete="off"/>
 }
 @if (canCreate) {
-<input type="submit" value="create"/>
+<input type="submit" value="create" autocomplete="off"/>
 }
 @if (canUpdate) {
-<form method="post" action="/simple-resource">
+<form method="post" action="/simple-resource" autocomplete="off">
     <input type="submit" value="update"/>
     <input type="hidden" name="action" value="update"/>
 </form>
 }
 @if (canDelete) {
-<input type="submit" value="delete"/>
+<input type="submit" value="delete" autocomplete="off"/>
 }
 </body>
 </html>

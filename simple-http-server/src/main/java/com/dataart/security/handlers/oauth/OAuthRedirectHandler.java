@@ -4,7 +4,6 @@ import com.dataart.security.oauth.OAuthAuthorizationClientCode;
 import com.dataart.security.oauth.OAuthErrorType;
 import com.dataart.security.services.OAuthService;
 import com.dataart.security.utils.Utils;
-import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
@@ -49,11 +48,6 @@ public class OAuthRedirectHandler extends AbstractBaseOAuthHandler {
 
             return;
         }
-
-        Headers responseHeaders = httpExchange.getResponseHeaders();
-
-        responseHeaders.add("Pragma", "no-cache");
-        responseHeaders.add("Cache-Control", "no-store");
 
         redirect(clientCode.getUserActionBasedRedirectUri(), httpExchange);
     }

@@ -13,7 +13,7 @@
         <li>@permission.name()</li>
     }
 </ul>
-<form method="post" action="/oauth/redirect">
+<form method="post" action="/oauth/redirect" autocomplete="off">
     <input type="submit" name="action" value="Allow"/>
     <input type="submit" name="action" value="Deny"/>
     <input type="hidden" name="state" value="@state"/>

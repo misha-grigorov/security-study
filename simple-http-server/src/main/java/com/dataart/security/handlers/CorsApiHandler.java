@@ -25,8 +25,6 @@ public class CorsApiHandler extends AbstractHttpHandler {
         Headers responseHeaders = httpExchange.getResponseHeaders();
 
         responseHeaders.add("Access-Control-Allow-Origin", "*");
-        responseHeaders.add("Cache-Control", "no-store");
-        responseHeaders.add("Pragma", "no-cache");
         responseHeaders.add(CONTENT_TYPE, APPLICATION_JSON);
         httpExchange.sendResponseHeaders(HTTP_OK, DEFAULT_RESPONSE.length());
 

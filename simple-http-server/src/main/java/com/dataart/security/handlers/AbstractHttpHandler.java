@@ -1,5 +1,6 @@
 package com.dataart.security.handlers;
 
+import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.pmw.tinylog.Logger;
@@ -8,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.dataart.security.utils.Utils.SERVER_SESSION_KEY;
@@ -32,6 +35,14 @@ public abstract class AbstractHttpHandler implements HttpHandler {
 
             return;
         }
+
+        Headers responseHeaders = httpExchange.getResponseHeaders();
+
+        responseHeaders.put("Cache-Control", Arrays.asList("no-store", "max-age=0"));
+        responseHeaders.put("Cache-Control", Arrays.asList("pre-check=0", "post-check=0"));
+        responseHeaders.add("Pragma", "no-cache");
+        responseHeaders.add("Expires", String.valueOf(Instant.EPOCH.getEpochSecond()));
+        responseHeaders.add("Last-Modified", String.valueOf(Instant.now().getEpochSecond()));
 
         chainHandle(httpExchange);
     }
